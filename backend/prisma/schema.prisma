@@ -1,0 +1,296 @@
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum UserRole {
+  SUPER_ADMIN
+  FLEET_MANAGER
+  DRIVER
+  SAFETY_OFFICER
+  FINANCIAL_ANALYST
+}
+
+enum VehicleCategory {
+  SEDAN
+  SUV
+  VAN
+  TRUCK
+}
+
+enum VehicleStatus {
+  ACTIVE
+  ON_TRIP
+  MAINTENANCE
+  OUT_OF_SERVICE
+  RETIRED
+}
+
+enum DriverStatus {
+  ACTIVE
+  ON_TRIP
+  SUSPENDED
+  INACTIVE
+}
+
+enum TripStatus {
+  DRAFT
+  DISPATCHED
+  COMPLETED
+  CANCELLED
+}
+
+enum MaintenanceStatus {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum ExpenseCategory {
+  FUEL
+  TOLL
+  PARKING
+  FOOD
+  MAINTENANCE
+  ACCOMMODATION
+  OTHER
+}
+
+enum ExpenseStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model User {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email         String    @unique
+  passwordHash  String    @map("password_hash")
+  fullName      String    @map("full_name")
+  role          UserRole  @default(DRIVER)
+  isActive      Boolean   @default(true) @map("is_active")
+  lastLoginAt   DateTime? @map("last_login_at")
+  emailVerified Boolean   @default(false) @map("email_verified")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  deletedAt     DateTime? @map("deleted_at")
+
+  driverProfile    Driver?
+  approvedExpenses Expense[]     @relation("ApprovedExpenses")
+  createdExpenses  Expense[]     @relation("CreatedExpenses")
+  createdTrips     Trip[]        @relation("CreatedTrips")
+  completedTrips   Trip[]        @relation("CompletedTrips")
+  activityLogs     ActivityLog[]
+
+  @@index([createdAt])
+  @@index([updatedAt])
+  @@index([email])
+  @@map("users")
+}
+
+model Vehicle {
+  id                  String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  plateNumber         String          @unique @map("plate_number")
+  make                String
+  model               String
+  year                Int
+  category            VehicleCategory
+  status              VehicleStatus   @default(ACTIVE)
+  name                String?
+  acquisitionCost     Decimal?        @map("acquisition_cost") @db.Decimal(10, 2)
+  currentOdometer     Int             @default(0) @map("current_odometer")
+  capacity            Int             @default(5)
+  fuelType            String          @default("GASOLINE") @map("fuel_type")
+  imageUrl            String?         @map("image_url")
+  vinNumber           String?         @unique @map("vin_number")
+  nextServiceOdometer Int?            @map("next_service_odometer")
+  nextServiceDate     DateTime?       @map("next_service_date")
+  createdAt           DateTime        @default(now()) @map("created_at")
+  updatedAt           DateTime        @updatedAt @map("updated_at")
+  deletedAt           DateTime?       @map("deleted_at")
+
+  trips        Trip[]
+  maintenances Maintenance[]
+  fuelLogs     FuelLog[]
+  expenses     Expense[]
+
+  @@index([createdAt])
+  @@index([updatedAt])
+  @@index([status])
+  @@index([plateNumber])
+  @@map("vehicles")
+}
+
+model Driver {
+  id                    String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId                String?      @unique @map("user_id") @db.Uuid
+  fullName              String       @map("full_name")
+  licenseNumber         String       @unique @map("license_number")
+  licenseCategory       String?      @map("license_category")
+  licenseExpiry         DateTime     @map("license_expiry")
+  phone                 String
+  status                DriverStatus @default(ACTIVE)
+  safetyScore           Float?       @map("safety_score")
+  emergencyContactName  String?      @map("emergency_contact_name")
+  emergencyContactPhone String?      @map("emergency_contact_phone")
+  address               String?
+  createdAt             DateTime     @default(now()) @map("created_at")
+  updatedAt             DateTime     @updatedAt @map("updated_at")
+  deletedAt             DateTime?    @map("deleted_at")
+
+  user     User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  trips    Trip[]
+  fuelLogs FuelLog[]
+
+  @@index([createdAt])
+  @@index([updatedAt])
+  @@index([status])
+  @@index([licenseNumber])
+  @@map("drivers")
+}
+
+model Trip {
+  id            String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tripNumber    String     @unique @map("trip_number")
+  vehicleId     String     @map("vehicle_id") @db.Uuid
+  driverId      String     @map("driver_id") @db.Uuid
+  startLocation String     @map("start_location")
+  endLocation   String     @map("end_location")
+  plannedStart  DateTime   @map("planned_start")
+  plannedEnd    DateTime   @map("planned_end")
+  actualStart   DateTime?  @map("actual_start")
+  actualEnd     DateTime?  @map("actual_end")
+  startOdometer Int?       @map("start_odometer")
+  endOdometer   Int?       @map("end_odometer")
+  status        TripStatus @default(DRAFT)
+  purpose       String?
+  cargoWeight   Float?     @map("cargo_weight")
+  plannedDistance Float?   @map("planned_distance")
+  distanceKm    Float?     @map("distance_km")
+  estimatedCost Decimal?   @map("estimated_cost") @db.Decimal(10, 2)
+  actualCost    Decimal?   @map("actual_cost") @db.Decimal(10, 2)
+  notes         String?
+  createdBy     String?    @map("created_by") @db.Uuid
+  completedBy   String?    @map("completed_by") @db.Uuid
+  createdAt     DateTime   @default(now()) @map("created_at")
+  updatedAt     DateTime   @updatedAt @map("updated_at")
+
+  vehicle   Vehicle   @relation(fields: [vehicleId], references: [id], onDelete: Restrict)
+  driver    Driver    @relation(fields: [driverId], references: [id], onDelete: Restrict)
+  creator   User?     @relation("CreatedTrips", fields: [createdBy], references: [id], onDelete: SetNull)
+  completer User?     @relation("CompletedTrips", fields: [completedBy], references: [id], onDelete: SetNull)
+  expenses  Expense[]
+
+  @@index([createdAt])
+  @@index([updatedAt])
+  @@index([status])
+  @@index([tripNumber])
+  @@index([vehicleId])
+  @@index([driverId])
+  @@map("trips")
+}
+
+model Maintenance {
+  id              String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  vehicleId       String            @map("vehicle_id") @db.Uuid
+  description     String
+  scheduledDate   DateTime          @map("scheduled_date")
+  completedDate   DateTime?         @map("completed_date")
+  cost            Decimal           @default(0.00) @map("cost") @db.Decimal(10, 2)
+  status          MaintenanceStatus @default(SCHEDULED)
+  maintenanceType String            @map("maintenance_type")
+  performedBy     String?           @map("performed_by")
+  invoiceNumber   String?           @map("invoice_number")
+  notes           String?
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt @map("updated_at")
+
+  vehicle Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Restrict)
+
+  @@index([createdAt])
+  @@index([updatedAt])
+  @@index([status])
+  @@index([vehicleId])
+  @@map("maintenances")
+}
+
+model FuelLog {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  vehicleId       String   @map("vehicle_id") @db.Uuid
+  driverId        String   @map("driver_id") @db.Uuid
+  logDate         DateTime @default(now()) @map("log_date")
+  odometerReading Int      @map("odometer_reading")
+  fuelQuantity    Decimal  @map("fuel_quantity") @db.Decimal(8, 2)
+  cost            Decimal  @map("cost") @db.Decimal(10, 2)
+  efficiency      Decimal? @db.Decimal(8, 2)
+  fuelStation     String?  @map("fuel_station")
+  pricePerUnit    Decimal? @map("price_per_unit") @db.Decimal(10, 2)
+  receiptNumber   String?  @map("receipt_number")
+  notes           String?
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  vehicle Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Restrict)
+  driver  Driver  @relation(fields: [driverId], references: [id], onDelete: Restrict)
+
+  @@index([createdAt])
+  @@index([updatedAt])
+  @@index([vehicleId])
+  @@index([driverId])
+  @@map("fuel_logs")
+}
+
+model Expense {
+  id            String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tripId        String?         @map("trip_id") @db.Uuid
+  vehicleId     String?         @map("vehicle_id") @db.Uuid
+  amount        Decimal         @map("amount") @db.Decimal(10, 2)
+  category      ExpenseCategory
+  description   String
+  date          DateTime        @db.Date
+  status        ExpenseStatus   @default(PENDING)
+  approvedBy    String?         @map("approved_by") @db.Uuid
+  createdBy     String          @map("created_by") @db.Uuid
+  attachmentUrl String?         @map("attachment_url")
+  approvalDate  DateTime?       @map("approval_date")
+  notes         String?
+  createdAt     DateTime        @default(now()) @map("created_at")
+  updatedAt     DateTime        @updatedAt @map("updated_at")
+
+  trip     Trip?    @relation(fields: [tripId], references: [id], onDelete: SetNull)
+  vehicle  Vehicle? @relation(fields: [vehicleId], references: [id], onDelete: SetNull)
+  approver User?    @relation("ApprovedExpenses", fields: [approvedBy], references: [id], onDelete: SetNull)
+  creator  User     @relation("CreatedExpenses", fields: [createdBy], references: [id], onDelete: Restrict)
+
+  @@index([createdAt])
+  @@index([updatedAt])
+  @@index([status])
+  @@index([tripId])
+  @@index([vehicleId])
+  @@map("expenses")
+}
+
+model ActivityLog {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId     String?  @map("user_id") @db.Uuid
+  action     String
+  module     String
+  details    Json?
+  ipAddress  String?  @map("ip_address")
+  userAgent  String?  @map("user_agent")
+  entityId   String?  @map("entity_id") @db.Uuid
+  entityType String?  @map("entity_type")
+  timestamp  DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([timestamp])
+  @@index([userId])
+  @@map("activity_logs")
+}
