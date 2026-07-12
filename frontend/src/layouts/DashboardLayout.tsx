@@ -3,6 +3,8 @@ import { Outlet, Navigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
+import { AiAssistant } from '../components/AiAssistant';
+import { Loader2 } from 'lucide-react';
 
 export function DashboardLayout() {
   const { user, loading } = useAuth();
@@ -12,8 +14,16 @@ export function DashboardLayout() {
 
   if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-950">
-        <div className="animate-spin rounded-full h-10 w-10 border-4 border-indigo-500 border-t-transparent" />
+      <div
+        className="flex h-screen items-center justify-center"
+        style={{ backgroundColor: 'var(--zinc-950-val)' }}
+      >
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="w-8 h-8 animate-spin" style={{ color: '#0F766E' }} />
+          <p className="text-sm font-medium" style={{ color: 'var(--zinc-450-val)' }}>
+            Loading workspace...
+          </p>
+        </div>
       </div>
     );
   }
@@ -23,17 +33,21 @@ export function DashboardLayout() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 transition-colors">
+    <div
+      className="min-h-screen transition-colors"
+      style={{ backgroundColor: 'var(--zinc-950-val)', color: 'var(--zinc-700-val)' }}
+    >
       <Sidebar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
       <div
         className={`flex flex-col min-h-screen transition-all duration-300 ${
-          isCollapsed ? 'md:pl-20' : 'md:pl-64'
+          isCollapsed ? 'md:pl-[72px]' : 'md:pl-[260px]'
         }`}
       >
         <Header isCollapsed={isCollapsed} />
-        <main className="flex-1 p-6 mt-16 max-w-[1600px] w-full mx-auto overflow-x-hidden">
+        <main className="flex-1 p-6 mt-16 max-w-[1600px] w-full mx-auto overflow-x-hidden page-transition">
           <Outlet />
         </main>
+        <AiAssistant />
       </div>
     </div>
   );

@@ -1,52 +1,198 @@
 @import "tailwindcss";
 
+/* ═══════════════════════════════════════════════════════════════════
+   TransitOps — Enterprise Design System v2.0
+   Reference: Stripe, Linear, Vercel, Odoo Enterprise, Atlassian
+   ═══════════════════════════════════════════════════════════════════ */
+
+@theme {
+  --color-primary: #0f766e;
+  --color-primary-hover: #115E59;
+  --color-brand-emerald: #0f766e;
+
+  --color-indigo-50: #f0fdf4;
+  --color-indigo-100: #d1fae5;
+  --color-indigo-500: #0f766e;
+  --color-indigo-550: #0d7069;
+  --color-indigo-600: #0f766e;
+  --color-indigo-650: #0d655e;
+  --color-indigo-700: #0d655e;
+  --color-indigo-950: #022c22;
+
+  /* Dynamic zinc color remapping */
+  --color-zinc-50: var(--zinc-50-val);
+  --color-zinc-100: var(--zinc-100-val);
+  --color-zinc-150: var(--zinc-150-val);
+  --color-zinc-200: var(--zinc-200-val);
+  --color-zinc-205: var(--zinc-200-val);
+  --color-zinc-300: var(--zinc-300-val);
+  --color-zinc-350: var(--zinc-350-val);
+  --color-zinc-400: var(--zinc-400-val);
+  --color-zinc-450: var(--zinc-450-val);
+  --color-zinc-455: var(--zinc-450-val);
+  --color-zinc-500: var(--zinc-500-val);
+  --color-zinc-550: var(--zinc-550-val);
+  --color-zinc-600: var(--zinc-600-val);
+  --color-zinc-650: var(--zinc-650-val);
+  --color-zinc-700: var(--zinc-700-val);
+  --color-zinc-705: var(--zinc-705-val);
+  --color-zinc-800: var(--zinc-800-val);
+  --color-zinc-805: var(--zinc-800-val);
+  --color-zinc-850: var(--zinc-850-val);
+  --color-zinc-900: var(--zinc-900-val);
+  --color-zinc-905: var(--zinc-900-val);
+  --color-zinc-950: var(--zinc-950-val);
+  --color-zinc-955: var(--zinc-950-val);
+
+  /* Teal aliases to cover dark mode teal-450/455 classes */
+  --color-teal-450: #2DD4BF;
+  --color-teal-455: #2DD4BF;
+  --color-teal-850: #134E4A;
+
+  /* Rose aliases */
+  --color-rose-450: #FB7185;
+  --color-rose-455: #FB7185;
+  --color-rose-955: #4C0519;
+
+  /* Amber aliases */
+  --color-amber-955: #451A03;
+
+  /* Animation tokens */
+  --animate-fade-in: fade-in 0.4s ease-out both;
+  --animate-slide-up: slide-up 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-slide-down: slide-down 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-scale-in: scale-in 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* ── Light Theme: Enterprise Layered Surfaces ── */
+    --zinc-50-val: #F8FAFC;
+    --zinc-100-val: #F1F5F9;
+    --zinc-150-val: #EEF2F6;
+    --zinc-200-val: #E2E8F0;
+    --zinc-300-val: #CBD5E1;
+    --zinc-350-val: #B0BEC5;
+    --zinc-400-val: #94A3B8;
+    --zinc-450-val: #64748B;
+    --zinc-500-val: #64748B;
+    --zinc-550-val: #475569;
+    --zinc-600-val: #475569;
+    --zinc-650-val: #334155;
+    --zinc-700-val: #1E293B;
+    --zinc-705-val: #0F172A;
+    --zinc-800-val: #E2E8F0;
+    --zinc-850-val: #F1F5F9;
+    --zinc-900-val: #FFFFFF;
+    --zinc-950-val: #F5F7FA;
+
+    --background: 210 20% 98%;
+    --foreground: 222 47% 11%;
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 222 47% 11%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 221.2 83.2% 53.3%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 173 78% 26%;
     --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 215 25% 27%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 210 40% 96%;
+    --accent-foreground: 222 47% 11%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
-    --radius: 0.5rem;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 173 78% 26%;
+    --radius: 0.75rem;
+
+    --shadow-xs: 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.06), 0 2px 4px -2px rgba(0,0,0,0.04);
+    --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.06), 0 4px 6px -4px rgba(0,0,0,0.04);
+    --shadow-xl: 0 20px 25px -5px rgba(0,0,0,0.06), 0 8px 10px -6px rgba(0,0,0,0.04);
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
+    --zinc-50-val: #0B1120;
+    --zinc-100-val: #1E293B;
+    --zinc-150-val: #1A2332;
+    --zinc-200-val: #1E293B;
+    --zinc-300-val: #334155;
+    --zinc-350-val: #475569;
+    --zinc-400-val: #64748B;
+    --zinc-450-val: #94A3B8;
+    --zinc-500-val: #94A3B8;
+    --zinc-550-val: #CBD5E1;
+    --zinc-600-val: #94A3B8;
+    --zinc-650-val: #CBD5E1;
+    --zinc-700-val: #F1F5F9;
+    --zinc-705-val: #F8FAFC;
+    --zinc-800-val: #1E293B;
+    --zinc-850-val: #1A2332;
+    --zinc-900-val: #111827;
+    --zinc-950-val: #0B1120;
+
+    --background: 222 84% 5%;
     --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
+    --card: 222 47% 6%;
     --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
+    --popover: 222 47% 6%;
     --popover-foreground: 210 40% 98%;
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
+    --primary: 173 91% 25%;
+    --primary-foreground: 222 47% 11%;
+    --secondary: 217 33% 17%;
     --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 217 33% 17%;
     --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
+    --destructive: 0 63% 31%;
     --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 48%;
+    --border: 217 33% 17%;
+    --input: 217 33% 17%;
+    --ring: 173 91% 25%;
+
+    --shadow-xs: 0 1px 2px rgba(0,0,0,0.3);
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.4), 0 1px 2px rgba(0,0,0,0.3);
+    --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.4), 0 2px 4px -2px rgba(0,0,0,0.3);
+    --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.4), 0 4px 6px -4px rgba(0,0,0,0.3);
+    --shadow-xl: 0 20px 25px -5px rgba(0,0,0,0.5), 0 8px 10px -6px rgba(0,0,0,0.4);
   }
 }
 
+/* ═══════════════════════════════════════════
+   Keyframe Animations
+   ═══════════════════════════════════════════ */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes slide-down {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+/* ═══════════════════════════════════════════
+   Base Resets
+   ═══════════════════════════════════════════ */
 * {
   border-color: hsl(var(--border));
 }
@@ -54,7 +200,54 @@
 body {
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
-  font-family: 'Inter', sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   margin: 0;
   padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* ═══════════════════════════════════════════
+   Utility Classes
+   ═══════════════════════════════════════════ */
+.skeleton {
+  background: linear-gradient(90deg, #F1F5F9 25%, #E2E8F0 50%, #F1F5F9 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.8s ease-in-out infinite;
+}
+.dark .skeleton {
+  background: linear-gradient(90deg, #1E293B 25%, #334155 50%, #1E293B 75%);
+  background-size: 200% 100%;
+}
+
+.card-hover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.page-transition {
+  animation: slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.pulse-live {
+  animation: pulse-soft 2s ease-in-out infinite;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+.dark ::-webkit-scrollbar-thumb { background: #334155; }
+.dark ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+/* Print */
+@media print {
+  body { background: white !important; }
+  nav, aside, header, .no-print, button { display: none !important; }
+  main { margin: 0 !important; padding: 20px !important; }
 }

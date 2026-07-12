@@ -2,7 +2,7 @@ import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
-import { BarChart3, Download, Truck, Users, Route, Fuel, Landmark } from 'lucide-react';
+import { BarChart3, Download, Truck, Users, Route, Fuel, Landmark, ShieldAlert, Award } from 'lucide-react';
 import { toast } from 'sonner';
 
 export function Reports() {
@@ -80,7 +80,8 @@ export function Reports() {
 
   if (!isAuthorized) {
     return (
-      <div className="p-6 bg-rose-50 dark:bg-rose-955/20 text-rose-700 dark:text-rose-450 rounded-2xl border border-rose-100 dark:border-rose-900/30">
+      <div className="p-5 bg-rose-50 dark:bg-rose-955/20 text-rose-700 dark:text-rose-450 rounded-2xl border border-rose-100 dark:border-rose-900/30 font-medium text-xs flex items-center gap-2">
+        <ShieldAlert className="w-4 h-4 text-rose-500" />
         You are not authorized to view the Reports Workbench.
       </div>
     );
@@ -95,64 +96,64 @@ export function Reports() {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 page-transition">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Reports Workbench</h1>
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">
-          Analyze operational statistics and export ledger summaries.
+        <h1 className="text-2xl font-bold tracking-tight text-zinc-705 dark:text-zinc-50">Reports Workbench</h1>
+        <p className="text-sm text-zinc-450 dark:text-zinc-455 mt-0.5">
+          Analyze operational statistics and export ledger summaries
         </p>
       </div>
 
       {/* KPI Overviews */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-        <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 shadow-xs">
-          <p className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-1">Total Fuel Expenses</p>
-          <p className="text-2xl font-extrabold text-indigo-600 dark:text-indigo-400">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 card-hover">
+          <p className="text-[10px] font-bold text-zinc-450 uppercase tracking-wider mb-1">Total Fuel Expenses</p>
+          <p className="text-2xl font-extrabold text-[#0F766E]">
             ${metrics?.metrics?.monthlyFuelCost.toLocaleString() || '0.00'}
           </p>
-          <span className="text-[10px] text-zinc-400 dark:text-zinc-500">Current billing cycle</span>
+          <span className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-1 block">Current billing cycle</span>
         </div>
-        <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 shadow-xs">
-          <p className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-1">Active Resources</p>
-          <p className="text-2xl font-extrabold text-indigo-600 dark:text-indigo-400">
+        <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 card-hover">
+          <p className="text-[10px] font-bold text-zinc-450 uppercase tracking-wider mb-1">Active Resources</p>
+          <p className="text-2xl font-extrabold text-[#0F766E]">
             {metrics?.metrics?.activeVehicles || 0} / {metrics?.metrics?.totalVehicles || 0} Vehicles
           </p>
-          <span className="text-[10px] text-zinc-400 dark:text-zinc-500">Currently operational</span>
+          <span className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-1 block">Currently operational</span>
         </div>
-        <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 shadow-xs">
-          <p className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-1">Upcoming Service Alerts</p>
+        <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 card-hover">
+          <p className="text-[10px] font-bold text-zinc-450 uppercase tracking-wider mb-1">Upcoming Service Alerts</p>
           <p className="text-2xl font-extrabold text-amber-500">
             {metrics?.metrics?.upcomingServices || 0} Assets
           </p>
-          <span className="text-[10px] text-zinc-400 dark:text-zinc-500">Due for oil or component checks</span>
+          <span className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-1 block">Due for oil or component checks</span>
         </div>
       </div>
 
       {/* Reports lists download cards */}
-      <div className="space-y-4 pt-4">
-        <h3 className="text-md font-bold text-zinc-850 dark:text-zinc-200">
+      <div className="space-y-4">
+        <h3 className="text-sm font-bold text-zinc-705 dark:text-zinc-200">
           Available Export Data Modules
         </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {reportsList.map((rep) => {
             const Icon = rep.icon;
             return (
               <div
                 key={rep.name}
-                className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 shadow-xs flex items-center justify-between hover:shadow-md transition-all duration-300"
+                className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 flex items-center justify-between card-hover"
               >
                 <div className="flex items-start gap-4">
-                  <div className="p-3 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-650 dark:text-indigo-455 rounded-xl shrink-0">
+                  <div className="w-10 h-10 rounded-xl bg-teal-50 dark:bg-teal-950/20 text-[#0F766E] flex items-center justify-center shrink-0">
                     <Icon className="w-5 h-5" />
                   </div>
                   <div>
-                    <h4 className="font-bold text-sm text-zinc-800 dark:text-zinc-200">{rep.name}</h4>
-                    <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1 max-w-sm">{rep.desc}</p>
+                    <h4 className="font-bold text-sm text-zinc-705 dark:text-zinc-200">{rep.name}</h4>
+                    <p className="text-xs text-zinc-450 dark:text-zinc-450 mt-1 max-w-sm font-medium">{rep.desc}</p>
                   </div>
                 </div>
                 <button
                   onClick={() => downloadCSV(rep.module)}
-                  className="p-3.5 bg-zinc-50 hover:bg-zinc-100 dark:bg-zinc-950 dark:hover:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-300 rounded-xl hover:scale-105 transition-all cursor-pointer shadow-xs"
+                  className="w-9 h-9 bg-[#F8FAFC] hover:bg-zinc-100 dark:bg-zinc-950 dark:hover:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-300 rounded-lg hover:scale-105 transition-all cursor-pointer flex items-center justify-center shadow-xs shrink-0 ml-4"
                   title="Download CSV"
                 >
                   <Download className="w-4 h-4" />

@@ -1,5 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
+import logoSvg from '../assets/logo.svg';
 import { useAuth } from '../contexts/AuthContext';
 import {
   LayoutDashboard,
@@ -13,6 +14,9 @@ import {
   ChevronLeft,
   ChevronRight,
   User as UserIcon,
+  Activity,
+  Map,
+  Sparkles,
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -36,6 +40,24 @@ export function Sidebar({ isCollapsed, setIsCollapsed }: SidebarProps) {
       label: 'Dashboard',
       icon: LayoutDashboard,
       roles: ['SUPER_ADMIN', 'FLEET_MANAGER', 'SAFETY_OFFICER', 'FINANCIAL_ANALYST', 'DRIVER'],
+    },
+    {
+      to: '/operations',
+      label: 'Live Control',
+      icon: Activity,
+      roles: ['SUPER_ADMIN', 'FLEET_MANAGER', 'SAFETY_OFFICER', 'FINANCIAL_ANALYST'],
+    },
+    {
+      to: '/map',
+      label: 'Operations Map',
+      icon: Map,
+      roles: ['SUPER_ADMIN', 'FLEET_MANAGER', 'SAFETY_OFFICER', 'FINANCIAL_ANALYST', 'DRIVER'],
+    },
+    {
+      to: '/analytics',
+      label: 'Executive Analytics',
+      icon: Sparkles,
+      roles: ['SUPER_ADMIN', 'FLEET_MANAGER', 'SAFETY_OFFICER', 'FINANCIAL_ANALYST'],
     },
     {
       to: '/vehicles',
@@ -73,46 +95,86 @@ export function Sidebar({ isCollapsed, setIsCollapsed }: SidebarProps) {
       icon: BarChart3,
       roles: ['SUPER_ADMIN', 'FLEET_MANAGER', 'SAFETY_OFFICER', 'FINANCIAL_ANALYST'],
     },
+    {
+      to: '/users',
+      label: 'User Registry',
+      icon: UserIcon,
+      roles: ['SUPER_ADMIN'],
+    },
   ];
 
   const visibleItems = navItems.filter((item) => hasRole(item.roles));
 
   return (
     <aside
-      className={`fixed top-0 left-0 z-40 h-screen transition-all duration-300 border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 flex flex-col justify-between ${
-        isCollapsed ? 'w-20' : 'w-64'
+      className={`fixed top-0 left-0 z-40 h-screen transition-all duration-300 flex flex-col justify-between ${
+        isCollapsed ? 'w-[72px]' : 'w-[260px]'
       }`}
+      style={{
+        backgroundColor: 'var(--zinc-900-val)',
+        borderRight: '1px solid var(--zinc-200-val)',
+        boxShadow: '1px 0 3px rgba(0,0,0,0.03)',
+      }}
     >
       <div>
-        <div className="flex items-center justify-between p-4 border-b border-zinc-200 dark:border-zinc-800">
-          {!isCollapsed && (
-            <span className="text-xl font-bold tracking-wider text-indigo-600 dark:text-indigo-400">
-              TransitOps
-            </span>
+        {/* ── Logo Header ── */}
+        <div className="flex items-center justify-between px-4 h-16 border-b" style={{ borderColor: 'var(--zinc-200-val)' }}>
+          {isCollapsed ? (
+            <button
+              onClick={toggleSidebar}
+              className="mx-auto p-1.5 rounded-lg transition-colors cursor-pointer"
+              style={{ color: 'var(--zinc-500-val)' }}
+              title="Expand Sidebar"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          ) : (
+            <>
+              <img src={logoSvg} alt="TransitOps" className="h-9 w-auto" />
+              <button
+                onClick={toggleSidebar}
+                className="p-1.5 rounded-lg border transition-all duration-200 cursor-pointer hover:shadow-sm"
+                style={{
+                  borderColor: 'var(--zinc-200-val)',
+                  color: 'var(--zinc-400-val)',
+                }}
+              >
+                <ChevronLeft className="w-3.5 h-3.5" />
+              </button>
+            </>
           )}
-          <button
-            onClick={toggleSidebar}
-            className="p-1.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200 mx-auto transition-colors"
-          >
-            {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
-          </button>
         </div>
 
+        {/* ── User Profile ── */}
         {user && (
-          <div className={`p-4 border-b border-zinc-200 dark:border-zinc-800 flex items-center gap-3 ${isCollapsed ? 'justify-center' : ''}`}>
-            <div className="w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-950 flex items-center justify-center text-indigo-600 dark:text-indigo-400 shrink-0">
-              <UserIcon className="w-5 h-5" />
+          <div
+            className={`px-4 py-3 border-b flex items-center gap-3 ${isCollapsed ? 'justify-center' : ''}`}
+            style={{ borderColor: 'var(--zinc-200-val)' }}
+          >
+            <div
+              className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 font-bold text-sm"
+              style={{ backgroundColor: '#E6F5F3', color: '#0F766E' }}
+            >
+              <span className="dark:hidden">{user.fullName?.charAt(0)?.toUpperCase() || 'U'}</span>
+              <span className="hidden dark:inline">
+                <UserIcon className="w-4 h-4" />
+              </span>
             </div>
             {!isCollapsed && (
               <div className="truncate">
-                <p className="text-sm font-semibold text-zinc-800 dark:text-zinc-200 truncate">{user.fullName}</p>
-                <p className="text-xs text-zinc-500 dark:text-zinc-400 capitalize">{user.role.replace('_', ' ').toLowerCase()}</p>
+                <p className="text-[13px] font-semibold truncate" style={{ color: 'var(--zinc-700-val)' }}>
+                  {user.fullName}
+                </p>
+                <p className="text-[11px] capitalize" style={{ color: 'var(--zinc-450-val)' }}>
+                  {user.role.replace(/_/g, ' ').toLowerCase()}
+                </p>
               </div>
             )}
           </div>
         )}
 
-        <nav className="p-3 space-y-1.5">
+        {/* ── Navigation ── */}
+        <nav className="px-3 py-3 space-y-0.5 overflow-y-auto max-h-[calc(100vh-200px)]">
           {visibleItems.map((item) => {
             const Icon = item.icon;
             return (
@@ -120,15 +182,22 @@ export function Sidebar({ isCollapsed, setIsCollapsed }: SidebarProps) {
                 key={item.to}
                 to={item.to}
                 className={({ isActive }) =>
-                  `flex items-center gap-3.5 px-3.5 py-2.5 rounded-xl font-medium text-sm transition-all duration-200 ${
+                  `group flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all duration-200 ${
+                    isCollapsed ? 'justify-center' : ''
+                  } ${
                     isActive
-                      ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-950/45 dark:text-indigo-400'
-                      : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-900/50 hover:text-zinc-900 dark:hover:text-zinc-100'
-                  } ${isCollapsed ? 'justify-center' : ''}`
+                      ? 'sidebar-active'
+                      : 'sidebar-inactive'
+                  }`
+                }
+                style={({ isActive }) =>
+                  isActive
+                    ? { backgroundColor: '#0F766E', color: '#FFFFFF', boxShadow: '0 1px 3px rgba(15,118,110,0.3)' }
+                    : { color: 'var(--zinc-600-val)' }
                 }
                 title={item.label}
               >
-                <Icon className="w-5 h-5 shrink-0" />
+                <Icon className="w-[18px] h-[18px] shrink-0" />
                 {!isCollapsed && <span>{item.label}</span>}
               </NavLink>
             );
@@ -136,19 +205,22 @@ export function Sidebar({ isCollapsed, setIsCollapsed }: SidebarProps) {
         </nav>
       </div>
 
-      <div className="p-3 border-t border-zinc-200 dark:border-zinc-800">
+      {/* ── Logout ── */}
+      <div className="px-3 py-3 border-t" style={{ borderColor: 'var(--zinc-200-val)' }}>
         <button
           onClick={logout}
-          className={`w-full flex items-center gap-3.5 px-3.5 py-2.5 rounded-xl text-sm font-medium text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/20 transition-all duration-200 ${
+          className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all duration-200 cursor-pointer hover:bg-rose-50 dark:hover:bg-rose-950/20 ${
             isCollapsed ? 'justify-center' : ''
           }`}
+          style={{ color: '#E11D48' }}
           title="Logout"
         >
-          <LogOut className="w-5 h-5 shrink-0" />
+          <LogOut className="w-[18px] h-[18px] shrink-0" />
           {!isCollapsed && <span>Logout</span>}
         </button>
       </div>
     </aside>
   );
 }
+
 export default Sidebar;

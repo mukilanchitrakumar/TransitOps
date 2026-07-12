@@ -4,7 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 import { api } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
 import { toast } from 'sonner';
-import { Wrench, Plus, Search, Calendar, Play, CheckSquare, XSquare, Landmark } from 'lucide-react';
+import { Wrench, Plus, Search, Calendar, Play, CheckSquare, XSquare, Landmark, Download, FileText, Settings, X, ShieldAlert } from 'lucide-react';
 import { Modal } from '../components/Modal';
 import { StatusBadge } from '../components/StatusBadge';
 import { TableSkeleton } from '../components/Skeleton';
@@ -176,25 +176,26 @@ export function Maintenances() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 page-transition">
+      {/* Header Section */}
       <div className="flex items-center justify-between max-sm:flex-col max-sm:items-start gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Maintenance Workspace</h1>
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">
-            Schedule vehicle checks and track repair logs.
+          <h1 className="text-2xl font-bold tracking-tight text-zinc-705 dark:text-zinc-50">Maintenance Workspace</h1>
+          <p className="text-sm text-zinc-450 dark:text-zinc-455 mt-0.5">
+            Schedule vehicle checks and track mechanical repair logs
           </p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex items-center gap-3">
           <button
             onClick={exportCSV}
-            className="px-4 py-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl text-sm font-semibold hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+            className="h-10 px-4 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl text-xs font-semibold text-zinc-650 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors flex items-center gap-2 cursor-pointer hover:shadow-xs"
           >
-            Export CSV
+            <Download className="w-3.5 h-3.5" /> Export CSV
           </button>
           {isEditable && (
             <button
               onClick={() => setIsCreateOpen(true)}
-              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-semibold flex items-center gap-2 cursor-pointer shadow-lg shadow-indigo-500/10"
+              className="h-10 px-4 bg-[#0F766E] hover:bg-[#115E59] text-white rounded-xl text-xs font-semibold flex items-center gap-2 cursor-pointer shadow-lg shadow-teal-500/10 active:scale-[0.98] transition-all"
             >
               <Plus className="w-4 h-4" /> Schedule Task
             </button>
@@ -202,8 +203,9 @@ export function Maintenances() {
         </div>
       </div>
 
+      {/* Filter Selector block */}
       <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 shadow-xs flex items-center justify-between gap-4 flex-wrap">
-        <div className="flex items-center gap-3 flex-1 min-w-[280px]">
+        <div className="flex items-center gap-3">
           <select
             value={status}
             onChange={(e) => {
@@ -212,7 +214,7 @@ export function Maintenances() {
                 return prev;
               });
             }}
-            className="px-3.5 py-2 rounded-xl text-sm border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-800 dark:text-zinc-200 focus:bg-white outline-hidden focus:ring-2 focus:ring-indigo-500 transition-all"
+            className="h-10 px-3 pr-8 rounded-xl text-xs border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-zinc-700 dark:text-zinc-300 focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden cursor-pointer"
           >
             <option value="">All Statuses</option>
             <option value="SCHEDULED">Scheduled</option>
@@ -223,91 +225,103 @@ export function Maintenances() {
         </div>
       </div>
 
+      {/* Table grid layout */}
       {isLoading ? (
         <TableSkeleton />
       ) : data?.data?.length > 0 ? (
         <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl overflow-hidden shadow-xs">
-          <table className="w-full text-left border-collapse text-sm">
-            <thead>
-              <tr className="bg-zinc-50 dark:bg-zinc-950/40 text-zinc-500 dark:text-zinc-400 font-semibold border-b border-zinc-150 dark:border-zinc-800">
-                <th className="p-4">Vehicle</th>
-                <th className="p-4">Task Details</th>
-                <th className="p-4">Scheduled Date</th>
-                <th className="p-4">Cost ($)</th>
-                <th className="p-4">Status</th>
-                {isEditable && <th className="p-4 text-right">Actions</th>}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
-              {data.data.map((m: any) => (
-                <tr key={m.id} className="hover:bg-zinc-50/50 dark:hover:bg-zinc-800/20 transition-colors">
-                  <td className="p-4 font-bold text-zinc-900 dark:text-zinc-100">{m.vehicle.plateNumber}</td>
-                  <td className="p-4">
-                    <span className="font-semibold text-xs text-indigo-500 dark:text-indigo-400 uppercase">{m.maintenanceType}</span>
-                    <p className="font-medium text-zinc-700 dark:text-zinc-300 mt-0.5">{m.description}</p>
-                  </td>
-                  <td className="p-4 font-semibold text-zinc-600 dark:text-zinc-400">
-                    {new Date(m.scheduledDate).toLocaleDateString()}
-                  </td>
-                  <td className="p-4 font-bold">${parseFloat(m.cost || 0).toFixed(2)}</td>
-                  <td className="p-4">
-                    <StatusBadge status={m.status} />
-                  </td>
-                  {isEditable && (
-                    <td className="p-4 text-right flex justify-end gap-3.5">
-                      {m.status === 'SCHEDULED' && (
-                        <>
-                          <button
-                            onClick={() => cancelMutation.mutate(m.id)}
-                            className="text-rose-600 dark:text-rose-450 hover:underline font-semibold text-xs flex items-center gap-0.5 cursor-pointer"
-                          >
-                            <XSquare className="w-3.5 h-3.5" /> Cancel
-                          </button>
-                          <button
-                            onClick={() => startMutation.mutate(m.id)}
-                            className="text-indigo-600 dark:text-indigo-400 hover:underline font-semibold text-xs flex items-center gap-0.5 cursor-pointer"
-                          >
-                            <Play className="w-3.5 h-3.5" /> Start
-                          </button>
-                        </>
-                      )}
-
-                      {m.status === 'IN_PROGRESS' && (
-                        <>
-                          <button
-                            onClick={() => cancelMutation.mutate(m.id)}
-                            className="text-rose-600 dark:text-rose-450 hover:underline font-semibold text-xs flex items-center gap-0.5 cursor-pointer"
-                          >
-                            <XSquare className="w-3.5 h-3.5" /> Cancel
-                          </button>
-                          <button
-                            onClick={() => handleCompleteClick(m)}
-                            className="text-emerald-600 dark:text-emerald-450 hover:underline font-semibold text-xs flex items-center gap-0.5 cursor-pointer"
-                          >
-                            <CheckSquare className="w-3.5 h-3.5" /> Complete
-                          </button>
-                        </>
-                      )}
-                    </td>
-                  )}
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr className="bg-[#F8FAFC] dark:bg-[#111827]/40 text-zinc-555 font-bold border-b border-zinc-200 dark:border-zinc-800 sticky top-0 uppercase tracking-wider">
+                  <th className="p-4">Vehicle</th>
+                  <th className="p-4">Task Details</th>
+                  <th className="p-4">Scheduled Date</th>
+                  <th className="p-4">Cost ($)</th>
+                  <th className="p-4">Status</th>
+                  {isEditable && <th className="p-4 text-right">Actions</th>}
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-zinc-150 dark:divide-zinc-800 font-semibold text-zinc-650 dark:text-zinc-300">
+                {data.data.map((m: any) => (
+                  <tr key={m.id} className="hover:bg-zinc-50/50 dark:hover:bg-zinc-800/10 transition-colors">
+                    <td className="p-4 text-zinc-705 dark:text-zinc-100 font-extrabold text-sm">{m.vehicle.plateNumber}</td>
+                    <td className="p-4">
+                      <span className="px-2 py-0.5 rounded-md text-[9px] bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 font-bold uppercase">
+                        {m.maintenanceType}
+                      </span>
+                      <p className="font-bold text-zinc-700 dark:text-zinc-200 mt-1">{m.description}</p>
+                    </td>
+                    <td className="p-4 text-zinc-600 dark:text-zinc-400 font-mono">
+                      {new Date(m.scheduledDate).toLocaleDateString()}
+                    </td>
+                    <td className="p-4 font-extrabold text-zinc-800 dark:text-zinc-200">
+                      ${parseFloat(m.cost || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </td>
+                    <td className="p-4">
+                      <StatusBadge status={m.status} />
+                    </td>
+                    {isEditable && (
+                      <td className="p-4 text-right">
+                        <div className="flex justify-end items-center gap-2">
+                          {m.status === 'SCHEDULED' && (
+                            <>
+                              <button
+                                onClick={() => cancelMutation.mutate(m.id)}
+                                className="p-1.5 rounded-lg border border-rose-250 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/20 cursor-pointer transition-colors"
+                                title="Cancel Task"
+                              >
+                                <XSquare className="w-3.5 h-3.5" />
+                              </button>
+                              <button
+                                onClick={() => startMutation.mutate(m.id)}
+                                className="p-1.5 rounded-lg bg-[#0F766E]/10 hover:bg-[#0F766E]/20 text-[#0F766E] cursor-pointer transition-colors"
+                                title="Start Work"
+                              >
+                                <Play className="w-3.5 h-3.5" />
+                              </button>
+                            </>
+                          )}
+                          {m.status === 'IN_PROGRESS' && (
+                            <>
+                              <button
+                                onClick={() => cancelMutation.mutate(m.id)}
+                                className="p-1.5 rounded-lg border border-rose-250 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/20 cursor-pointer transition-colors"
+                                title="Cancel Task"
+                              >
+                                <XSquare className="w-3.5 h-3.5" />
+                              </button>
+                              <button
+                                onClick={() => handleCompleteClick(m)}
+                                className="p-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 cursor-pointer transition-colors"
+                                title="Complete Task"
+                              >
+                                <CheckSquare className="w-3.5 h-3.5" />
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      </td>
+                    )}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       ) : (
         <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-12 text-center shadow-xs flex flex-col items-center justify-center space-y-4">
-          <div className="w-16 h-16 rounded-2xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-500 flex items-center justify-center">
+          <div className="w-16 h-16 rounded-2xl bg-teal-50 dark:bg-teal-950/20 text-[#0F766E] flex items-center justify-center">
             <Wrench className="w-8 h-8" />
           </div>
-          <h3 className="text-lg font-bold text-zinc-800 dark:text-zinc-200">No scheduled repairs</h3>
-          <p className="text-sm text-zinc-500 max-w-sm">
+          <h3 className="text-lg font-bold text-zinc-705 dark:text-zinc-200">No scheduled repairs</h3>
+          <p className="text-sm text-zinc-450 dark:text-zinc-455 max-w-sm font-medium">
             Keep track of mechanical inspections, parts updates, and routines.
           </p>
           {isEditable && (
             <button
               onClick={() => setIsCreateOpen(true)}
-              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-semibold cursor-pointer"
+              className="h-10 px-4 bg-[#0F766E] hover:bg-[#115E59] text-white rounded-xl text-xs font-bold cursor-pointer transition-all"
             >
               Schedule Repairs Now
             </button>
@@ -317,15 +331,15 @@ export function Maintenances() {
 
       {/* Schedule Maintenance Modal */}
       <Modal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} title="Schedule Mechanical Maintenance">
-        <form onSubmit={handleCreateSubmit} className="space-y-4">
+        <form onSubmit={handleCreateSubmit} className="space-y-4 pt-1">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Select Vehicle *</label>
+              <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-455 uppercase mb-1.5 tracking-wider">Select Vehicle *</label>
               <select
                 required
                 value={formVehicle}
                 onChange={(e) => setFormVehicle(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+                className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden cursor-pointer"
               >
                 <option value="">-- Choose Vehicle --</option>
                 {vehiclesData?.data?.map((v: any) => (
@@ -336,11 +350,11 @@ export function Maintenances() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Type *</label>
+              <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-455 uppercase mb-1.5 tracking-wider">Type *</label>
               <select
                 value={formType}
                 onChange={(e) => setFormType(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+                className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden cursor-pointer"
               >
                 <option value="ROUTINE">Routine Maintenance</option>
                 <option value="REPAIR">Repair Work</option>
@@ -350,49 +364,49 @@ export function Maintenances() {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Scheduled Date *</label>
+              <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-455 uppercase mb-1.5 tracking-wider">Scheduled Date *</label>
               <input
                 type="date"
                 required
                 value={formScheduledDate}
                 onChange={(e) => setFormScheduledDate(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+                className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Estimated Cost ($)</label>
+              <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-455 uppercase mb-1.5 tracking-wider">Estimated Cost ($)</label>
               <input
                 type="number"
                 value={formEstimatedCost}
                 onChange={(e) => setFormEstimatedCost(e.target.value)}
                 placeholder="0.00"
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+                className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden transition-all"
               />
             </div>
           </div>
           <div>
-            <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Task Description *</label>
+            <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-455 uppercase mb-1.5 tracking-wider">Task Description *</label>
             <input
               type="text"
               required
               value={formDescription}
               onChange={(e) => setFormDescription(e.target.value)}
               placeholder="e.g. Engine oil and filter replacement"
-              className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+              className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden transition-all"
             />
           </div>
           <div>
-            <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Operational Notes</label>
+            <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-455 uppercase mb-1.5 tracking-wider">Operational Notes</label>
             <textarea
               value={formNotes}
               onChange={(e) => setFormNotes(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm h-16 resize-none"
+              className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden resize-none h-16"
             />
           </div>
           <button
             type="submit"
             disabled={createMutation.isPending}
-            className="w-full py-2 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 disabled:bg-indigo-400 text-sm cursor-pointer"
+            className="w-full h-11 bg-[#0F766E] hover:bg-[#115E59] text-white rounded-lg font-bold text-xs cursor-pointer shadow-lg shadow-teal-500/10 active:scale-[0.98] transition-all flex items-center justify-center"
           >
             {createMutation.isPending ? 'Scheduling...' : 'Schedule Task'}
           </button>
@@ -401,53 +415,53 @@ export function Maintenances() {
 
       {/* Complete Maintenance Modal */}
       <Modal isOpen={isCompleteOpen} onClose={() => setIsCompleteOpen(false)} title="Finalize Maintenance Task">
-        <form onSubmit={handleCompleteSubmit} className="space-y-4">
+        <form onSubmit={handleCompleteSubmit} className="space-y-4 pt-1">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Actual Invoice Cost ($) *</label>
+              <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-455 uppercase mb-1.5 tracking-wider">Actual Invoice Cost ($) *</label>
               <input
                 type="number"
                 required
                 value={formActualCost}
                 onChange={(e) => setFormActualCost(e.target.value)}
                 placeholder="0.00"
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+                className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden transition-all"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Performed By / Workshop *</label>
+              <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-455 uppercase mb-1.5 tracking-wider">Performed By / Workshop *</label>
               <input
                 type="text"
                 required
                 value={formPerformedBy}
                 onChange={(e) => setFormPerformedBy(e.target.value)}
                 placeholder="e.g. Ford Service Center"
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+                className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden transition-all"
               />
             </div>
           </div>
           <div>
-            <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Invoice Number</label>
+            <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-455 uppercase mb-1.5 tracking-wider">Invoice Number</label>
             <input
               type="text"
               value={formInvoice}
               onChange={(e) => setFormInvoice(e.target.value)}
               placeholder="e.g. INV-100239"
-              className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+              className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden transition-all"
             />
           </div>
           <div>
-            <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Completion Notes</label>
+            <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-455 uppercase mb-1.5 tracking-wider">Completion Notes</label>
             <textarea
               value={formCompletionNotes}
               onChange={(e) => setFormCompletionNotes(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm h-16 resize-none"
+              className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden resize-none h-16"
             />
           </div>
           <button
             type="submit"
             disabled={completeMutation.isPending}
-            className="w-full py-2 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 disabled:bg-emerald-400 text-sm cursor-pointer"
+            className="w-full h-11 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold text-xs cursor-pointer shadow-lg shadow-emerald-500/10 active:scale-[0.98] transition-all flex items-center justify-center"
           >
             {completeMutation.isPending ? 'Submitting...' : 'Complete Task'}
           </button>

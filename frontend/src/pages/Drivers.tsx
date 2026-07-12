@@ -4,7 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 import { api } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
 import { toast } from 'sonner';
-import { Users, Plus, Search, AlertTriangle } from 'lucide-react';
+import { Users, Plus, Search, AlertTriangle, Download, Edit3, Archive, Filter, X } from 'lucide-react';
 import { Modal } from '../components/Modal';
 import { StatusBadge } from '../components/StatusBadge';
 import { TableSkeleton } from '../components/Skeleton';
@@ -152,7 +152,7 @@ export function Drivers() {
   };
 
   const getSafetyScoreColor = (score: number) => {
-    if (score >= 80) return 'bg-emerald-500';
+    if (score >= 80) return 'bg-[#0F766E]';
     if (score >= 50) return 'bg-amber-500';
     return 'bg-rose-500';
   };
@@ -189,25 +189,26 @@ export function Drivers() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 page-transition">
+      {/* Header Panel */}
       <div className="flex items-center justify-between max-sm:flex-col max-sm:items-start gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Drivers</h1>
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">
-            Configure operators, contact lists, and safety scorecard levels.
+          <h1 className="text-2xl font-bold tracking-tight text-zinc-705 dark:text-zinc-50">Drivers</h1>
+          <p className="text-sm text-zinc-450 dark:text-zinc-450 mt-0.5">
+            Configure operators, contact lists, and safety scorecard levels
           </p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex items-center gap-3">
           <button
             onClick={exportCSV}
-            className="px-4 py-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl text-sm font-semibold hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+            className="h-10 px-4 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl text-xs font-semibold text-zinc-650 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors flex items-center gap-2 cursor-pointer hover:shadow-xs"
           >
-            Export CSV
+            <Download className="w-3.5 h-3.5" /> Export CSV
           </button>
           {isEditable && (
             <button
               onClick={() => setIsCreateOpen(true)}
-              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-semibold flex items-center gap-2 cursor-pointer shadow-lg shadow-indigo-500/10"
+              className="h-10 px-4 bg-[#0F766E] hover:bg-[#115E59] text-white rounded-xl text-xs font-semibold flex items-center gap-2 cursor-pointer shadow-lg shadow-teal-500/10 active:scale-[0.98] transition-all"
             >
               <Plus className="w-4 h-4" /> Add Driver Profile
             </button>
@@ -215,6 +216,7 @@ export function Drivers() {
         </div>
       </div>
 
+      {/* Filter panel */}
       <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 shadow-xs flex items-center justify-between gap-4 flex-wrap">
         <div className="flex items-center gap-3 flex-1 min-w-[280px]">
           <div className="relative flex-1">
@@ -228,109 +230,117 @@ export function Drivers() {
                   return prev;
                 });
               }}
-              className="w-full pl-9 pr-4 py-2 rounded-xl text-sm border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 focus:bg-white text-zinc-950 dark:text-zinc-50 outline-hidden focus:ring-2 focus:ring-indigo-500 transition-all"
+              className="w-full h-10 pl-9 pr-4 rounded-xl text-xs border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden transition-all duration-200"
             />
-            <Search className="absolute left-3 top-3 w-4 h-4 text-zinc-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
           </div>
-          <select
-            value={status}
-            onChange={(e) => {
-              setSearchParams((prev) => {
-                prev.set('status', e.target.value);
-                return prev;
-              });
-            }}
-            className="px-3.5 py-2 rounded-xl text-sm border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-850 dark:text-zinc-202 focus:bg-white outline-hidden focus:ring-2 focus:ring-indigo-500 transition-all"
-          >
-            <option value="">All Statuses</option>
-            <option value="ACTIVE">Active</option>
-            <option value="ON_TRIP">On Trip</option>
-            <option value="SUSPENDED">Suspended</option>
-            <option value="INACTIVE">Inactive</option>
-          </select>
+          <div className="relative">
+            <select
+              value={status}
+              onChange={(e) => {
+                setSearchParams((prev) => {
+                  prev.set('status', e.target.value);
+                  return prev;
+                });
+              }}
+              className="h-10 pl-3 pr-8 rounded-xl text-xs border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-zinc-700 dark:text-zinc-300 focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden appearance-none cursor-pointer"
+            >
+              <option value="">All Statuses</option>
+              <option value="ACTIVE">Active</option>
+              <option value="ON_TRIP">On Trip</option>
+              <option value="SUSPENDED">Suspended</option>
+              <option value="INACTIVE">Inactive</option>
+            </select>
+            <Filter className="absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-400 pointer-events-none" />
+          </div>
         </div>
       </div>
 
+      {/* List Table */}
       {isLoading ? (
         <TableSkeleton />
       ) : data?.data?.length > 0 ? (
         <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl overflow-hidden shadow-xs">
-          <table className="w-full text-left border-collapse text-sm">
-            <thead>
-              <tr className="bg-zinc-50 dark:bg-zinc-950/40 text-zinc-500 dark:text-zinc-400 font-semibold border-b border-zinc-150 dark:border-zinc-800">
-                <th className="p-4">Driver Name</th>
-                <th className="p-4">License Info</th>
-                <th className="p-4">Phone Number</th>
-                <th className="p-4">Safety Score</th>
-                <th className="p-4">Status</th>
-                {isEditable && <th className="p-4 text-right">Actions</th>}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
-              {data.data.map((d: any) => (
-                <tr key={d.id} className="hover:bg-zinc-50/50 dark:hover:bg-zinc-800/20 transition-colors">
-                  <td className="p-4 font-bold text-zinc-900 dark:text-zinc-100">{d.fullName}</td>
-                  <td className="p-4 font-medium">
-                    <span className="block font-semibold">
-                      {d.licenseNumber} ({d.licenseCategory || 'Class A'})
-                    </span>
-                    <span className={`text-xs inline-flex items-center gap-1 font-semibold ${
-                      isLicenseExpiringSoon(d.licenseExpiry) ? 'text-amber-500' : new Date(d.licenseExpiry) < new Date() ? 'text-rose-500' : 'text-zinc-450'
-                    }`}>
-                      {isLicenseExpiringSoon(d.licenseExpiry) && <AlertTriangle className="w-3 h-3 text-amber-500" />}
-                      Expiry: {new Date(d.licenseExpiry).toLocaleDateString()}
-                    </span>
-                  </td>
-                  <td className="p-4 font-medium text-zinc-700 dark:text-zinc-305">{d.phone}</td>
-                  <td className="p-4">
-                    {d.safetyScore !== null ? (
-                      <div className="flex items-center gap-2">
-                        <div className="w-24 bg-zinc-100 dark:bg-zinc-800 h-2 rounded-full overflow-hidden border border-zinc-200 dark:border-zinc-700">
-                          <div className={`h-full ${getSafetyScoreColor(d.safetyScore)}`} style={{ width: `${d.safetyScore}%` }} />
-                        </div>
-                        <span className="font-bold text-xs">{d.safetyScore}%</span>
-                      </div>
-                    ) : (
-                      <span className="text-zinc-400">N/A</span>
-                    )}
-                  </td>
-                  <td className="p-4">
-                    <StatusBadge status={d.status} />
-                  </td>
-                  {isEditable && (
-                    <td className="p-4 text-right flex justify-end gap-3.5">
-                      <button
-                        onClick={() => handleEditClick(d)}
-                        className="text-indigo-600 dark:text-indigo-400 hover:underline font-semibold cursor-pointer"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => handleDeleteClick(d.id)}
-                        className="text-rose-600 dark:text-rose-400 hover:underline font-semibold cursor-pointer"
-                      >
-                        Archive
-                      </button>
-                    </td>
-                  )}
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr className="bg-[#F8FAFC] dark:bg-[#111827]/40 text-zinc-555 font-bold border-b border-zinc-200 dark:border-zinc-800 sticky top-0 uppercase tracking-wider">
+                  <th className="p-4">Driver Name</th>
+                  <th className="p-4">License Info</th>
+                  <th className="p-4">Phone Number</th>
+                  <th className="p-4">Safety Score</th>
+                  <th className="p-4">Status</th>
+                  {isEditable && <th className="p-4 text-right">Actions</th>}
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-zinc-150 dark:divide-zinc-800 font-semibold text-zinc-650 dark:text-zinc-300">
+                {data.data.map((d: any) => (
+                  <tr key={d.id} className="hover:bg-zinc-50/50 dark:hover:bg-zinc-800/10 transition-colors">
+                    <td className="p-4 text-zinc-705 dark:text-zinc-100 font-extrabold text-sm">{d.fullName}</td>
+                    <td className="p-4">
+                      <div className="text-zinc-700 dark:text-zinc-200 font-bold">{d.licenseNumber} ({d.licenseCategory || 'Class A'})</div>
+                      <span className={`text-[10px] inline-flex items-center gap-1 font-semibold mt-0.5 ${
+                        isLicenseExpiringSoon(d.licenseExpiry) ? 'text-amber-500' : new Date(d.licenseExpiry) < new Date() ? 'text-rose-500' : 'text-zinc-450'
+                      }`}>
+                        {isLicenseExpiringSoon(d.licenseExpiry) && <AlertTriangle className="w-3 h-3 text-amber-500" />}
+                        Expiry: {new Date(d.licenseExpiry).toLocaleDateString()}
+                      </span>
+                    </td>
+                    <td className="p-4 font-mono">{d.phone}</td>
+                    <td className="p-4">
+                      {d.safetyScore !== null ? (
+                        <div className="flex items-center gap-2">
+                          <div className="w-24 bg-zinc-100 dark:bg-zinc-800 h-2 rounded-full overflow-hidden border border-zinc-200 dark:border-zinc-700">
+                            <div className={`h-full ${getSafetyScoreColor(d.safetyScore)}`} style={{ width: `${d.safetyScore}%` }} />
+                          </div>
+                          <span className="font-extrabold text-[11px]">{d.safetyScore}%</span>
+                        </div>
+                      ) : (
+                        <span className="text-zinc-400">N/A</span>
+                      )}
+                    </td>
+                    <td className="p-4">
+                      <StatusBadge status={d.status} />
+                    </td>
+                    {isEditable && (
+                      <td className="p-4 text-right">
+                        <div className="flex justify-end items-center gap-2">
+                          <button
+                            onClick={() => handleEditClick(d)}
+                            className="p-1.5 rounded-lg border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800 cursor-pointer transition-colors"
+                            title="Edit Driver"
+                          >
+                            <Edit3 className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteClick(d.id)}
+                            className="p-1.5 rounded-lg border border-rose-200 dark:border-rose-900/30 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/20 cursor-pointer transition-colors"
+                            title="Archive Driver"
+                          >
+                            <Archive className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </td>
+                    )}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       ) : (
         <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-12 text-center shadow-xs flex flex-col items-center justify-center space-y-4">
-          <div className="w-16 h-16 rounded-2xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-500 flex items-center justify-center">
+          <div className="w-16 h-16 rounded-2xl bg-teal-50 dark:bg-teal-950/20 text-[#0F766E] flex items-center justify-center">
             <Users className="w-8 h-8" />
           </div>
-          <h3 className="text-lg font-bold text-zinc-800 dark:text-zinc-200">No driver profiles registered</h3>
-          <p className="text-sm text-zinc-500 max-w-sm">
+          <h3 className="text-lg font-bold text-zinc-755 dark:text-zinc-200">No driver profiles registered</h3>
+          <p className="text-sm text-zinc-450 dark:text-zinc-450 max-w-sm font-medium">
             Register operators to coordinate trip dispatches, fuel inputs, and safety records.
           </p>
           {isEditable && (
             <button
               onClick={() => setIsCreateOpen(true)}
-              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-semibold cursor-pointer"
+              className="h-10 px-4 bg-[#0F766E] hover:bg-[#115E59] text-white rounded-xl text-xs font-bold cursor-pointer transition-all"
             >
               Add Your First Driver
             </button>
@@ -340,119 +350,119 @@ export function Drivers() {
 
       {/* Add Driver Modal */}
       <Modal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} title="Register Driver Profile">
-        <form onSubmit={handleCreateSubmit} className="space-y-4">
+        <form onSubmit={handleCreateSubmit} className="space-y-4 pt-1">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Full Name *</label>
+              <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-450 uppercase mb-1.5 tracking-wider">Full Name *</label>
               <input
                 type="text"
                 required
                 value={formName}
                 onChange={(e) => setFormName(e.target.value)}
                 placeholder="e.g. Alex"
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm text-zinc-900 dark:text-zinc-150"
+                className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden transition-all"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Phone *</label>
+              <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-450 uppercase mb-1.5 tracking-wider">Phone *</label>
               <input
                 type="text"
                 required
                 value={formPhone}
                 onChange={(e) => setFormPhone(e.target.value)}
                 placeholder="e.g. +1 555-0199"
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm text-zinc-900 dark:text-zinc-150"
+                className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden transition-all"
               />
             </div>
           </div>
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">License Number *</label>
+              <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-450 uppercase mb-1.5 tracking-wider">License Number *</label>
               <input
                 type="text"
                 required
                 value={formLicense}
                 onChange={(e) => setFormLicense(e.target.value)}
                 placeholder="e.g. DL-98234-X"
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+                className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden transition-all"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">License Category</label>
+              <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-450 uppercase mb-1.5 tracking-wider">License Category</label>
               <input
                 type="text"
                 value={formLicenseCategory}
                 onChange={(e) => setFormLicenseCategory(e.target.value)}
                 placeholder="e.g. Class A"
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+                className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden transition-all"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">License Expiry *</label>
+              <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-450 uppercase mb-1.5 tracking-wider">License Expiry *</label>
               <input
                 type="date"
                 required
                 value={formExpiry}
                 onChange={(e) => setFormExpiry(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+                className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden transition-all"
               />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Safety Score (0-100)</label>
+              <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-450 uppercase mb-1.5 tracking-wider">Safety Score (0-100)</label>
               <input
                 type="number"
                 min="0"
                 max="100"
                 value={formSafetyScore}
                 onChange={(e) => setFormSafetyScore(parseInt(e.target.value))}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+                className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden transition-all"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">User Link ID (UUID optional)</label>
+              <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-450 uppercase mb-1.5 tracking-wider">User Link ID</label>
               <input
                 type="text"
                 value={formUserId}
                 onChange={(e) => setFormUserId(e.target.value)}
-                placeholder="For login pairing"
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+                placeholder="Optional paired user ID"
+                className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden transition-all"
               />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4 pt-2 border-t border-zinc-150 dark:border-zinc-800">
             <div>
-              <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Emergency Contact Name</label>
+              <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-450 uppercase mb-1.5 tracking-wider">Emergency Contact Name</label>
               <input
                 type="text"
                 value={formEmergencyName}
                 onChange={(e) => setFormEmergencyName(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+                className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden transition-all"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Emergency Contact Phone</label>
+              <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-450 uppercase mb-1.5 tracking-wider">Emergency Contact Phone</label>
               <input
                 type="text"
                 value={formEmergencyPhone}
                 onChange={(e) => setFormEmergencyPhone(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+                className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden transition-all"
               />
             </div>
           </div>
           <div>
-            <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Address Details</label>
+            <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-450 uppercase mb-1.5 tracking-wider">Address Details</label>
             <textarea
               value={formAddress}
               onChange={(e) => setFormAddress(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm h-16 resize-none"
+              className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden resize-none h-16"
             />
           </div>
           <button
             type="submit"
             disabled={createMutation.isPending}
-            className="w-full py-2 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 disabled:bg-indigo-400 text-sm cursor-pointer"
+            className="w-full h-11 bg-[#0F766E] hover:bg-[#115E59] text-white rounded-lg font-bold text-xs cursor-pointer shadow-lg shadow-teal-500/10 active:scale-[0.98] transition-all flex items-center justify-center"
           >
             {createMutation.isPending ? 'Saving...' : 'Add Driver'}
           </button>
@@ -461,24 +471,24 @@ export function Drivers() {
 
       {/* Edit Driver Modal */}
       <Modal isOpen={isEditOpen} onClose={() => setIsEditOpen(false)} title="Update Driver Profile">
-        <form onSubmit={handleEditSubmit} className="space-y-4">
+        <form onSubmit={handleEditSubmit} className="space-y-4 pt-1">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Full Name</label>
+              <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-450 uppercase mb-1.5 tracking-wider">Full Name</label>
               <input
                 type="text"
                 required
                 value={formName}
                 onChange={(e) => setFormName(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+                className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden transition-all"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Driver Status</label>
+              <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-450 uppercase mb-1.5 tracking-wider">Driver Status</label>
               <select
                 value={driverStatus}
                 onChange={(e) => setDriverStatus(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+                className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden cursor-pointer"
               >
                 <option value="ACTIVE">Active</option>
                 <option value="ON_TRIP">On Trip</option>
@@ -489,82 +499,82 @@ export function Drivers() {
           </div>
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">License Number</label>
+              <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-450 uppercase mb-1.5 tracking-wider">License Number</label>
               <input
                 type="text"
                 required
                 value={formLicense}
                 onChange={(e) => setFormLicense(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+                className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden transition-all"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">License Category</label>
+              <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-450 uppercase mb-1.5 tracking-wider">License Category</label>
               <input
                 type="text"
                 value={formLicenseCategory}
                 onChange={(e) => setFormLicenseCategory(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+                className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden transition-all"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">License Expiry</label>
+              <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-450 uppercase mb-1.5 tracking-wider">License Expiry</label>
               <input
                 type="date"
                 required
                 value={formExpiry}
                 onChange={(e) => setFormExpiry(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+                className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden transition-all"
               />
             </div>
           </div>
           <div className="grid grid-cols-3 gap-4">
             <div className="col-span-2">
-              <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Phone</label>
+              <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-450 uppercase mb-1.5 tracking-wider">Phone</label>
               <input
                 type="text"
                 required
                 value={formPhone}
                 onChange={(e) => setFormPhone(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+                className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden transition-all"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Safety Score</label>
+              <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-450 uppercase mb-1.5 tracking-wider">Safety Score</label>
               <input
                 type="number"
                 min="0"
                 max="100"
                 value={formSafetyScore}
                 onChange={(e) => setFormSafetyScore(parseInt(e.target.value))}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+                className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden transition-all"
               />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4 pt-2 border-t border-zinc-150 dark:border-zinc-800">
             <div>
-              <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Emergency Contact Name</label>
+              <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-450 uppercase mb-1.5 tracking-wider">Emergency Contact Name</label>
               <input
                 type="text"
                 value={formEmergencyName}
                 onChange={(e) => setFormEmergencyName(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+                className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden transition-all"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Emergency Contact Phone</label>
+              <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-450 uppercase mb-1.5 tracking-wider">Emergency Contact Phone</label>
               <input
                 type="text"
                 value={formEmergencyPhone}
                 onChange={(e) => setFormEmergencyPhone(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+                className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden transition-all"
               />
             </div>
           </div>
           <button
             type="submit"
             disabled={updateMutation.isPending}
-            className="w-full py-2 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 disabled:bg-indigo-400 text-sm cursor-pointer"
+            className="w-full h-11 bg-[#0F766E] hover:bg-[#115E59] text-white rounded-lg font-bold text-xs cursor-pointer shadow-lg shadow-teal-500/10 active:scale-[0.98] transition-all flex items-center justify-center"
           >
             {updateMutation.isPending ? 'Updating...' : 'Save Changes'}
           </button>

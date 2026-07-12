@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
 import { toast } from 'sonner';
-import { Fuel, Landmark, Plus, Search, Calendar, Check, X, ClipboardList } from 'lucide-react';
+import { Fuel, Landmark, Plus, Search, Calendar, Check, X, ClipboardList, Download, FileText } from 'lucide-react';
 import { Modal } from '../components/Modal';
 import { StatusBadge } from '../components/StatusBadge';
 import { TableSkeleton } from '../components/Skeleton';
@@ -228,33 +228,33 @@ export function Logbook() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 page-transition">
       {/* Header Panel */}
       <div className="flex items-center justify-between max-sm:flex-col max-sm:items-start gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Logbook Ledger</h1>
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">
-            Submit fuel inputs and operational expense claims.
+          <h1 className="text-2xl font-bold tracking-tight text-zinc-705 dark:text-zinc-50">Logbook Ledger</h1>
+          <p className="text-sm text-zinc-450 dark:text-zinc-455 mt-0.5">
+            Submit fuel inputs and operational expense claims
           </p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex items-center gap-3">
           <button
             onClick={exportCSV}
-            className="px-4 py-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl text-sm font-semibold hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+            className="h-10 px-4 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl text-xs font-semibold text-zinc-650 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors flex items-center gap-2 cursor-pointer hover:shadow-xs"
           >
-            Export CSV
+            <Download className="w-3.5 h-3.5" /> Export CSV
           </button>
           {activeTab === 'fuel' ? (
             <button
               onClick={() => setIsFuelOpen(true)}
-              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-semibold flex items-center gap-2 cursor-pointer shadow-lg shadow-indigo-500/10"
+              className="h-10 px-4 bg-[#0F766E] hover:bg-[#115E59] text-white rounded-xl text-xs font-semibold flex items-center gap-2 cursor-pointer shadow-lg shadow-teal-500/10 active:scale-[0.98] transition-all"
             >
               <Plus className="w-4 h-4" /> Log Fuel Fill
             </button>
           ) : (
             <button
               onClick={() => setIsExpenseOpen(true)}
-              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-semibold flex items-center gap-2 cursor-pointer shadow-lg shadow-indigo-500/10"
+              className="h-10 px-4 bg-[#0F766E] hover:bg-[#115E59] text-white rounded-xl text-xs font-semibold flex items-center gap-2 cursor-pointer shadow-lg shadow-teal-500/10 active:scale-[0.98] transition-all"
             >
               <Plus className="w-4 h-4" /> Claim Expense
             </button>
@@ -263,13 +263,13 @@ export function Logbook() {
       </div>
 
       {/* Tabs list */}
-      <div className="flex border-b border-zinc-200 dark:border-zinc-800">
+      <div className="flex border-b border-zinc-200 dark:border-zinc-850">
         <button
           onClick={() => setActiveTab('fuel')}
           className={`px-5 py-3 text-sm font-bold border-b-2 transition-all flex items-center gap-2 cursor-pointer ${
             activeTab === 'fuel'
-              ? 'border-indigo-650 text-indigo-600 dark:border-indigo-400 dark:text-indigo-400'
-              : 'border-transparent text-zinc-500 hover:text-zinc-800 dark:text-zinc-400'
+              ? 'border-[#0F766E] text-[#0F766E]'
+              : 'border-transparent text-zinc-450 hover:text-zinc-800 dark:text-zinc-400'
           }`}
         >
           <Fuel className="w-4 h-4" /> Fuel Logs
@@ -278,8 +278,8 @@ export function Logbook() {
           onClick={() => setActiveTab('expenses')}
           className={`px-5 py-3 text-sm font-bold border-b-2 transition-all flex items-center gap-2 cursor-pointer ${
             activeTab === 'expenses'
-              ? 'border-indigo-650 text-indigo-600 dark:border-indigo-400 dark:text-indigo-400'
-              : 'border-transparent text-zinc-500 hover:text-zinc-800 dark:text-zinc-400'
+              ? 'border-[#0F766E] text-[#0F766E]'
+              : 'border-transparent text-zinc-450 hover:text-zinc-800 dark:text-zinc-400'
           }`}
         >
           <Landmark className="w-4 h-4" /> Expense Claims
@@ -293,46 +293,50 @@ export function Logbook() {
             <TableSkeleton />
           ) : fuelData?.data?.length > 0 ? (
             <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl overflow-hidden shadow-xs">
-              <table className="w-full text-left border-collapse text-sm">
-                <thead>
-                  <tr className="bg-zinc-50 dark:bg-zinc-950/40 text-zinc-500 dark:text-zinc-400 font-semibold border-b border-zinc-150 dark:border-zinc-800">
-                    <th className="p-4">Vehicle Plate</th>
-                    <th className="p-4">Driver</th>
-                    <th className="p-4">Odometer</th>
-                    <th className="p-4">Fuel Qty (L)</th>
-                    <th className="p-4">Cost ($)</th>
-                    <th className="p-4">Fuel Efficiency</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
-                  {fuelData.data.map((f: any) => (
-                    <tr key={f.id} className="hover:bg-zinc-50/50 dark:hover:bg-zinc-800/20 transition-colors">
-                      <td className="p-4 font-bold text-zinc-900 dark:text-zinc-100">{f.vehicle.plateNumber}</td>
-                      <td className="p-4 font-medium">{f.driver.fullName}</td>
-                      <td className="p-4 font-semibold">{f.odometerReading.toLocaleString()} km</td>
-                      <td className="p-4 font-semibold">{f.fuelQuantity} L</td>
-                      <td className="p-4 font-bold">${parseFloat(f.cost).toFixed(2)}</td>
-                      <td className="p-4">
-                        {f.efficiency !== null ? (
-                          <span className="font-bold text-emerald-600 dark:text-emerald-400">
-                            {parseFloat(f.efficiency).toFixed(2)} km/L
-                          </span>
-                        ) : (
-                          <span className="text-zinc-400">Calculated on next fill</span>
-                        )}
-                      </td>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse text-xs">
+                  <thead>
+                    <tr className="bg-[#F8FAFC] dark:bg-[#111827]/40 text-zinc-555 font-bold border-b border-zinc-200 dark:border-zinc-800 sticky top-0 uppercase tracking-wider">
+                      <th className="p-4">Vehicle Plate</th>
+                      <th className="p-4">Driver</th>
+                      <th className="p-4">Odometer</th>
+                      <th className="p-4">Fuel Qty</th>
+                      <th className="p-4">Cost ($)</th>
+                      <th className="p-4">Fuel Efficiency</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="divide-y divide-zinc-150 dark:divide-zinc-800 font-semibold text-zinc-650 dark:text-zinc-300">
+                    {fuelData.data.map((f: any) => (
+                      <tr key={f.id} className="hover:bg-zinc-50/50 dark:hover:bg-zinc-800/10 transition-colors">
+                        <td className="p-4 text-zinc-705 dark:text-zinc-100 font-extrabold text-sm">{f.vehicle.plateNumber}</td>
+                        <td className="p-4 text-zinc-700 dark:text-zinc-200 font-bold">{f.driver.fullName}</td>
+                        <td className="p-4 font-mono">{f.odometerReading.toLocaleString()} km</td>
+                        <td className="p-4">{f.fuelQuantity} L</td>
+                        <td className="p-4 font-extrabold text-zinc-800 dark:text-zinc-200">
+                          ${parseFloat(f.cost).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                        </td>
+                        <td className="p-4">
+                          {f.efficiency !== null ? (
+                            <span className="px-2 py-0.5 rounded-md text-[9px] bg-emerald-500/10 text-emerald-600 font-bold">
+                              {parseFloat(f.efficiency).toFixed(2)} km/L
+                            </span>
+                          ) : (
+                            <span className="text-zinc-400">Calculated on next fill</span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           ) : (
             <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-12 text-center shadow-xs flex flex-col items-center justify-center space-y-4">
-              <div className="w-16 h-16 rounded-2xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-500 flex items-center justify-center">
+              <div className="w-16 h-16 rounded-2xl bg-teal-50 dark:bg-teal-950/20 text-[#0F766E] flex items-center justify-center">
                 <Fuel className="w-8 h-8" />
               </div>
-              <h3 className="text-lg font-bold text-zinc-800 dark:text-zinc-200">No fuel entries logged</h3>
-              <p className="text-sm text-zinc-500 max-w-sm">
+              <h3 className="text-lg font-bold text-zinc-705 dark:text-zinc-200">No fuel entries logged</h3>
+              <p className="text-sm text-zinc-450 dark:text-zinc-455 max-w-sm font-medium">
                 Drivers can submit fill-up details to calculate operational consumption metrics.
               </p>
             </div>
@@ -342,84 +346,92 @@ export function Logbook() {
 
       {/* Expense ledger worksheet */}
       {activeTab === 'expenses' && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           {/* Main ledger list */}
           <div className="lg:col-span-2 space-y-6">
             {isExpenseLoading ? (
               <TableSkeleton />
             ) : expenseData?.data?.length > 0 ? (
               <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl overflow-hidden shadow-xs">
-                <table className="w-full text-left border-collapse text-sm">
-                  <thead>
-                    <tr className="bg-zinc-50 dark:bg-zinc-950/40 text-zinc-500 dark:text-zinc-400 font-semibold border-b border-zinc-150 dark:border-zinc-800">
-                      <th className="p-4">Category</th>
-                      <th className="p-4">Description</th>
-                      <th className="p-4">Amount</th>
-                      <th className="p-4">Date</th>
-                      <th className="p-4">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
-                    {expenseData.data.map((x: any) => (
-                      <tr key={x.id} className="hover:bg-zinc-50/50 dark:hover:bg-zinc-800/20 transition-colors">
-                        <td className="p-4 font-bold text-xs uppercase text-zinc-500">{x.category}</td>
-                        <td className="p-4 font-medium">
-                          {x.description}
-                          {x.creator && <span className="block text-xs text-zinc-400">By: {x.creator.fullName}</span>}
-                        </td>
-                        <td className="p-4 font-bold">${parseFloat(x.amount).toFixed(2)}</td>
-                        <td className="p-4 font-medium text-zinc-500">{new Date(x.date).toLocaleDateString()}</td>
-                        <td className="p-4">
-                          <StatusBadge status={x.status} />
-                        </td>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse text-xs">
+                    <thead>
+                      <tr className="bg-[#F8FAFC] dark:bg-[#111827]/40 text-zinc-555 font-bold border-b border-zinc-200 dark:border-zinc-800 sticky top-0 uppercase tracking-wider">
+                        <th className="p-4">Category</th>
+                        <th className="p-4">Description</th>
+                        <th className="p-4">Amount</th>
+                        <th className="p-4">Date</th>
+                        <th className="p-4">Status</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody className="divide-y divide-zinc-150 dark:divide-zinc-800 font-semibold text-zinc-650 dark:text-zinc-300">
+                      {expenseData.data.map((x: any) => (
+                        <tr key={x.id} className="hover:bg-zinc-50/50 dark:hover:bg-zinc-800/10 transition-colors">
+                          <td className="p-4">
+                            <span className="px-2 py-0.5 rounded-md text-[9px] bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 font-bold uppercase">
+                              {x.category}
+                            </span>
+                          </td>
+                          <td className="p-4">
+                            <div className="text-zinc-705 dark:text-zinc-100 font-extrabold">{x.description}</div>
+                            {x.creator && <span className="block text-[10px] text-zinc-400 dark:text-zinc-500 font-medium">By: {x.creator.fullName}</span>}
+                          </td>
+                          <td className="p-4 font-extrabold text-zinc-800 dark:text-zinc-200">
+                            ${parseFloat(x.amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                          </td>
+                          <td className="p-4 font-mono">{new Date(x.date).toLocaleDateString()}</td>
+                          <td className="p-4">
+                            <StatusBadge status={x.status} />
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             ) : (
               <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-12 text-center shadow-xs flex flex-col items-center justify-center space-y-4">
-                <div className="w-16 h-16 rounded-2xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-500 flex items-center justify-center">
+                <div className="w-16 h-16 rounded-2xl bg-teal-50 dark:bg-teal-950/20 text-[#0F766E] flex items-center justify-center">
                   <Landmark className="w-8 h-8" />
                 </div>
-                <h3 className="text-lg font-bold text-zinc-800 dark:text-zinc-200">No expense claims logged</h3>
-                <p className="text-sm text-zinc-500 max-w-sm">
+                <h3 className="text-lg font-bold text-zinc-705 dark:text-zinc-200">No expense claims logged</h3>
+                <p className="text-sm text-zinc-450 dark:text-zinc-455 max-w-sm font-medium">
                   Log operational tolls, lodging, or repairs.
                 </p>
               </div>
             )}
           </div>
 
-          {/* Approvals queue list (Only Manager/Admin visibility) */}
+          {/* Approvals queue list */}
           {isManager && (
-            <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 shadow-xs space-y-4 h-fit">
-              <div className="flex items-center gap-2 border-b border-zinc-100 dark:border-zinc-850 pb-3">
-                <ClipboardList className="w-5 h-5 text-indigo-500" />
-                <h3 className="text-md font-bold text-zinc-800 dark:text-zinc-200">Approvals Work Queue</h3>
+            <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 shadow-xs space-y-4 h-fit">
+              <div className="flex items-center gap-2 border-b border-zinc-100 dark:border-zinc-800 pb-3">
+                <ClipboardList className="w-4 h-4 text-[#0F766E]" />
+                <h3 className="text-sm font-bold text-zinc-705 dark:text-zinc-100">Approvals Queue</h3>
               </div>
               <div className="divide-y divide-zinc-100 dark:divide-zinc-800">
                 {expenseData?.data?.filter((x: any) => x.status === 'PENDING').length > 0 ? (
                   expenseData.data
                     .filter((x: any) => x.status === 'PENDING')
                     .map((x: any) => (
-                      <div key={x.id} className="py-4 space-y-2 text-xs">
+                      <div key={x.id} className="py-3.5 space-y-2 text-xs">
                         <div className="flex items-center justify-between">
-                          <span className="font-bold text-indigo-500 uppercase">{x.category}</span>
-                          <span className="font-bold text-sm text-zinc-800 dark:text-zinc-150">${parseFloat(x.amount).toFixed(2)}</span>
+                          <span className="px-2 py-0.5 rounded-md text-[9px] bg-zinc-100 dark:bg-zinc-800 text-zinc-650 dark:text-zinc-350 font-bold uppercase">{x.category}</span>
+                          <span className="font-extrabold text-sm text-zinc-800 dark:text-zinc-150">${parseFloat(x.amount).toFixed(2)}</span>
                         </div>
-                        <p className="text-zinc-650 dark:text-zinc-400 font-medium">{x.description}</p>
-                        <p className="text-zinc-400">Claimant: {x.creator?.fullName}</p>
+                        <p className="text-zinc-650 dark:text-zinc-405 font-medium">{x.description}</p>
+                        <p className="text-[10px] text-zinc-400">Claimant: {x.creator?.fullName}</p>
                         
                         <div className="flex gap-2 justify-end pt-1">
                           <button
                             onClick={() => rejectExpenseMutation.mutate(x.id)}
-                            className="px-2.5 py-1 text-[10px] rounded-lg border border-rose-200 text-rose-600 dark:border-rose-900/30 dark:text-rose-400 font-semibold hover:bg-rose-50 dark:hover:bg-rose-950/20 cursor-pointer flex items-center gap-0.5"
+                            className="px-2.5 py-1 text-[10px] rounded-lg border border-rose-200 text-rose-600 dark:border-rose-900/30 dark:text-rose-400 font-bold hover:bg-rose-50 dark:hover:bg-rose-955/20 cursor-pointer flex items-center gap-0.5"
                           >
                             <X className="w-3 h-3" /> Reject
                           </button>
                           <button
                             onClick={() => approveExpenseMutation.mutate(x.id)}
-                            className="px-2.5 py-1 text-[10px] rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold cursor-pointer flex items-center gap-0.5"
+                            className="px-2.5 py-1 text-[10px] rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold cursor-pointer flex items-center gap-0.5"
                           >
                             <Check className="w-3 h-3" /> Approve
                           </button>
@@ -427,7 +439,7 @@ export function Logbook() {
                       </div>
                     ))
                 ) : (
-                  <div className="text-xs text-zinc-400 dark:text-zinc-500 text-center py-6 font-medium">
+                  <div className="text-[11px] text-zinc-400 dark:text-zinc-500 text-center py-6 font-semibold">
                     ✓ Approvals work queue is empty
                   </div>
                 )}
@@ -439,15 +451,15 @@ export function Logbook() {
 
       {/* Log Fuel Modal */}
       <Modal isOpen={isFuelOpen} onClose={() => setIsFuelOpen(false)} title="Log Fuel Fill-Up">
-        <form onSubmit={handleFuelSubmit} className="space-y-4">
+        <form onSubmit={handleFuelSubmit} className="space-y-4 pt-1">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Select Vehicle *</label>
+              <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-450 uppercase mb-1.5 tracking-wider">Select Vehicle *</label>
               <select
                 required
                 value={fuelVehicle}
                 onChange={(e) => setFuelVehicle(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+                className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden cursor-pointer"
               >
                 <option value="">-- Choose Vehicle --</option>
                 {vehicles?.data?.map((v: any) => (
@@ -458,12 +470,12 @@ export function Logbook() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Select Driver *</label>
+              <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-450 uppercase mb-1.5 tracking-wider">Select Driver *</label>
               <select
                 required
                 value={fuelDriver}
                 onChange={(e) => setFuelDriver(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+                className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden cursor-pointer"
               >
                 <option value="">-- Choose Driver --</option>
                 {drivers?.data?.map((d: any) => (
@@ -476,64 +488,64 @@ export function Logbook() {
           </div>
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Odometer (km) *</label>
+              <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-450 uppercase mb-1.5 tracking-wider">Odometer (km) *</label>
               <input
                 type="number"
                 required
                 value={fuelOdometer}
                 onChange={(e) => setFuelOdometer(parseInt(e.target.value) || '')}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+                className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden transition-all"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Quantity (L) *</label>
+              <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-450 uppercase mb-1.5 tracking-wider">Quantity (L) *</label>
               <input
                 type="number"
                 step="0.01"
                 required
                 value={fuelQuantity}
                 onChange={(e) => setFuelQuantity(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+                className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden transition-all"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Total Cost ($) *</label>
+              <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-450 uppercase mb-1.5 tracking-wider">Total Cost ($) *</label>
               <input
                 type="number"
                 step="0.01"
                 required
                 value={fuelCost}
                 onChange={(e) => setFuelCost(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+                className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden transition-all"
               />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Fuel Station</label>
+              <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-450 uppercase mb-1.5 tracking-wider">Fuel Station</label>
               <input
                 type="text"
                 value={fuelStation}
                 onChange={(e) => setFuelStation(e.target.value)}
                 placeholder="e.g. Shell"
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+                className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden transition-all"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Receipt Number</label>
+              <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-450 uppercase mb-1.5 tracking-wider">Receipt Number</label>
               <input
                 type="text"
                 value={fuelReceipt}
                 onChange={(e) => setFuelReceipt(e.target.value)}
                 placeholder="e.g. RCP-109238"
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+                className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden transition-all"
               />
             </div>
           </div>
           <button
             type="submit"
             disabled={logFuelMutation.isPending}
-            className="w-full py-2 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 disabled:bg-indigo-400 text-sm cursor-pointer"
+            className="w-full h-11 bg-[#0F766E] hover:bg-[#115E59] text-white rounded-lg font-bold text-xs cursor-pointer shadow-lg shadow-teal-500/10 active:scale-[0.98] transition-all flex items-center justify-center"
           >
             {logFuelMutation.isPending ? 'Saving...' : 'Log Fuel Fill-Up'}
           </button>
@@ -542,14 +554,14 @@ export function Logbook() {
 
       {/* Claim Expense Modal */}
       <Modal isOpen={isExpenseOpen} onClose={() => setIsExpenseOpen(false)} title="Submit Expense Claim">
-        <form onSubmit={handleExpenseSubmit} className="space-y-4">
+        <form onSubmit={handleExpenseSubmit} className="space-y-4 pt-1">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Category *</label>
+              <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-450 uppercase mb-1.5 tracking-wider">Category *</label>
               <select
                 value={expCategory}
                 onChange={(e) => setExpCategory(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+                className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden cursor-pointer"
               >
                 <option value="FUEL">Fuel</option>
                 <option value="TOLL">Tolls</option>
@@ -560,7 +572,7 @@ export function Logbook() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Amount ($) *</label>
+              <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-450 uppercase mb-1.5 tracking-wider">Amount ($) *</label>
               <input
                 type="number"
                 step="0.01"
@@ -568,17 +580,17 @@ export function Logbook() {
                 value={expAmount}
                 onChange={(e) => setExpAmount(e.target.value)}
                 placeholder="0.00"
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+                className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden transition-all"
               />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Link to Trip (Optional)</label>
+              <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-450 uppercase mb-1.5 tracking-wider">Link to Trip (Optional)</label>
               <select
                 value={expTrip}
                 onChange={(e) => setExpTrip(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+                className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden cursor-pointer"
               >
                 <option value="">-- General Expense --</option>
                 {trips?.data?.map((t: any) => (
@@ -589,11 +601,11 @@ export function Logbook() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Link to Vehicle (Optional)</label>
+              <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-450 uppercase mb-1.5 tracking-wider">Link to Vehicle (Optional)</label>
               <select
                 value={expVehicle}
                 onChange={(e) => setExpVehicle(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+                className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden cursor-pointer"
               >
                 <option value="">-- No Specific Vehicle --</option>
                 {vehicles?.data?.map((v: any) => (
@@ -606,41 +618,41 @@ export function Logbook() {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Expense Date *</label>
+              <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-450 uppercase mb-1.5 tracking-wider">Expense Date *</label>
               <input
                 type="date"
                 required
                 value={expDate}
                 onChange={(e) => setExpDate(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+                className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Receipt Image Attachment URL</label>
+              <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-450 uppercase mb-1.5 tracking-wider">Receipt Attachment URL</label>
               <input
                 type="text"
                 value={expReceiptUrl}
                 onChange={(e) => setExpReceiptUrl(e.target.value)}
                 placeholder="https://imgur.com/receipt.jpg"
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+                className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden transition-all"
               />
             </div>
           </div>
           <div>
-            <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Expense Description *</label>
+            <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-450 uppercase mb-1.5 tracking-wider">Expense Description *</label>
             <input
               type="text"
               required
               value={expDescription}
               onChange={(e) => setExpDescription(e.target.value)}
               placeholder="e.g. Highway toll payment"
-              className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+              className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden transition-all"
             />
           </div>
           <button
             type="submit"
             disabled={logExpenseMutation.isPending}
-            className="w-full py-2 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 disabled:bg-indigo-400 text-sm cursor-pointer"
+            className="w-full h-11 bg-[#0F766E] hover:bg-[#115E59] text-white rounded-lg font-bold text-xs cursor-pointer shadow-lg shadow-teal-500/10 active:scale-[0.98] transition-all flex items-center justify-center"
           >
             {logExpenseMutation.isPending ? 'Submitting...' : 'Submit Claim'}
           </button>

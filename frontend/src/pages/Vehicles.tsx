@@ -4,7 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 import { api } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
 import { toast } from 'sonner';
-import { Truck, Plus, Search, Filter } from 'lucide-react';
+import { Truck, Plus, Search, Filter, Download, Edit3, Archive, X, Eye, FileSpreadsheet } from 'lucide-react';
 import { Modal } from '../components/Modal';
 import { StatusBadge } from '../components/StatusBadge';
 import { TableSkeleton } from '../components/Skeleton';
@@ -196,26 +196,26 @@ export function Vehicles() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 page-transition">
       {/* Header Panel */}
       <div className="flex items-center justify-between max-sm:flex-col max-sm:items-start gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Vehicles</h1>
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">
-            Audit and configure vehicle assets registry.
+          <h1 className="text-2xl font-bold tracking-tight text-zinc-705 dark:text-zinc-50">Vehicles</h1>
+          <p className="text-sm text-zinc-450 dark:text-zinc-450 mt-0.5">
+            Audit and configure vehicle assets registry
           </p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex items-center gap-3">
           <button
             onClick={exportCSV}
-            className="px-4 py-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl text-sm font-semibold hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+            className="h-10 px-4 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl text-xs font-semibold text-zinc-650 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors flex items-center gap-2 cursor-pointer hover:shadow-xs"
           >
-            Export CSV
+            <Download className="w-3.5 h-3.5" /> Export CSV
           </button>
           {isEditable && (
             <button
               onClick={() => setIsCreateOpen(true)}
-              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-semibold flex items-center gap-2 cursor-pointer shadow-lg shadow-indigo-500/10"
+              className="h-10 px-4 bg-[#0F766E] hover:bg-[#115E59] text-white rounded-xl text-xs font-semibold flex items-center gap-2 cursor-pointer shadow-lg shadow-teal-500/10 active:scale-[0.98] transition-all"
             >
               <Plus className="w-4 h-4" /> Register Vehicle
             </button>
@@ -237,27 +237,30 @@ export function Vehicles() {
                   return prev;
                 });
               }}
-              className="w-full pl-9 pr-4 py-2 rounded-xl text-sm border border-zinc-200 dark:border-zinc-850 bg-zinc-50 dark:bg-zinc-950 focus:bg-white text-zinc-950 dark:text-zinc-50 outline-hidden focus:ring-2 focus:ring-indigo-500 transition-all"
+              className="w-full h-10 pl-9 pr-4 rounded-xl text-xs border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden transition-all duration-200"
             />
-            <Search className="absolute left-3 top-3 w-4 h-4 text-zinc-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
           </div>
-          <select
-            value={status}
-            onChange={(e) => {
-              setSearchParams((prev) => {
-                prev.set('status', e.target.value);
-                return prev;
-              });
-            }}
-            className="px-3.5 py-2 rounded-xl text-sm border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-805 dark:text-zinc-202 focus:bg-white outline-hidden focus:ring-2 focus:ring-indigo-500 transition-all"
-          >
-            <option value="">All Statuses</option>
-            <option value="ACTIVE">Active</option>
-            <option value="ON_TRIP">On Trip</option>
-            <option value="MAINTENANCE">Maintenance</option>
-            <option value="OUT_OF_SERVICE">Out Of Service</option>
-            <option value="RETIRED">Retired</option>
-          </select>
+          <div className="relative">
+            <select
+              value={status}
+              onChange={(e) => {
+                setSearchParams((prev) => {
+                  prev.set('status', e.target.value);
+                  return prev;
+                });
+              }}
+              className="h-10 pl-3 pr-8 rounded-xl text-xs border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-zinc-700 dark:text-zinc-300 focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden appearance-none cursor-pointer"
+            >
+              <option value="">All Statuses</option>
+              <option value="ACTIVE">Active</option>
+              <option value="ON_TRIP">On Trip</option>
+              <option value="MAINTENANCE">Maintenance</option>
+              <option value="OUT_OF_SERVICE">Out Of Service</option>
+              <option value="RETIRED">Retired</option>
+            </select>
+            <Filter className="absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-400 pointer-events-none" />
+          </div>
         </div>
       </div>
 
@@ -266,69 +269,79 @@ export function Vehicles() {
         <TableSkeleton />
       ) : data?.data?.length > 0 ? (
         <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl overflow-hidden shadow-xs">
-          <table className="w-full text-left border-collapse text-sm">
-            <thead>
-              <tr className="bg-zinc-50 dark:bg-zinc-950/40 text-zinc-500 dark:text-zinc-400 font-semibold border-b border-zinc-150 dark:border-zinc-800">
-                <th className="p-4">Plate Number</th>
-                <th className="p-4">Vehicle Details</th>
-                <th className="p-4">Category</th>
-                <th className="p-4">Capacity (Max Load)</th>
-                <th className="p-4">Odometer</th>
-                <th className="p-4">Status</th>
-                {isEditable && <th className="p-4 text-right">Actions</th>}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
-              {data.data.map((v: any) => (
-                <tr key={v.id} className="hover:bg-zinc-50/50 dark:hover:bg-zinc-800/20 transition-colors">
-                  <td className="p-4 font-bold text-zinc-900 dark:text-zinc-100">
-                    <span className="block">{v.plateNumber}</span>
-                    {v.name && <span className="text-xs font-semibold text-zinc-400">Alias: {v.name}</span>}
-                  </td>
-                  <td className="p-4 font-medium">
-                    {v.make} {v.model} ({v.year})
-                    {v.acquisitionCost && <span className="block text-xs text-zinc-450">Acquisition: ${parseFloat(v.acquisitionCost).toLocaleString()}</span>}
-                  </td>
-                  <td className="p-4 uppercase text-xs font-bold text-zinc-500">{v.category}</td>
-                  <td className="p-4 font-semibold">{v.capacity} kg</td>
-                  <td className="p-4 font-semibold">{v.currentOdometer.toLocaleString()} km</td>
-                  <td className="p-4">
-                    <StatusBadge status={v.status} />
-                  </td>
-                  {isEditable && (
-                    <td className="p-4 text-right flex justify-end gap-3.5">
-                      <button
-                        onClick={() => handleEditClick(v)}
-                        className="text-indigo-600 dark:text-indigo-400 hover:underline font-semibold cursor-pointer"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => handleDeleteClick(v.id)}
-                        className="text-rose-600 dark:text-rose-400 hover:underline font-semibold cursor-pointer"
-                      >
-                        Archive
-                      </button>
-                    </td>
-                  )}
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr className="bg-[#F8FAFC] dark:bg-[#111827]/40 text-zinc-555 font-bold border-b border-zinc-200 dark:border-zinc-800 sticky top-0 uppercase tracking-wider">
+                  <th className="p-4">Plate Number</th>
+                  <th className="p-4">Vehicle Details</th>
+                  <th className="p-4">Category</th>
+                  <th className="p-4">Capacity</th>
+                  <th className="p-4">Odometer</th>
+                  <th className="p-4">Status</th>
+                  {isEditable && <th className="p-4 text-right">Actions</th>}
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-zinc-150 dark:divide-zinc-800 font-semibold text-zinc-650 dark:text-zinc-300">
+                {data.data.map((v: any) => (
+                  <tr key={v.id} className="hover:bg-zinc-50/50 dark:hover:bg-zinc-800/10 transition-colors">
+                    <td className="p-4">
+                      <span className="text-zinc-705 dark:text-zinc-100 font-extrabold text-sm block">{v.plateNumber}</span>
+                      {v.name && <span className="text-[10px] text-zinc-400 dark:text-zinc-500 font-medium">Alias: {v.name}</span>}
+                    </td>
+                    <td className="p-4">
+                      <div className="text-zinc-700 dark:text-zinc-200 font-bold">{v.make} {v.model} ({v.year})</div>
+                      {v.acquisitionCost && <span className="block text-[10px] text-zinc-400 dark:text-zinc-500 font-medium mt-0.5">Acquisition: ${parseFloat(v.acquisitionCost).toLocaleString()}</span>}
+                    </td>
+                    <td className="p-4">
+                      <span className="px-2 py-0.5 rounded-md text-[9px] bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 font-bold uppercase">
+                        {v.category}
+                      </span>
+                    </td>
+                    <td className="p-4">{v.capacity.toLocaleString()} kg</td>
+                    <td className="p-4 text-zinc-800 dark:text-zinc-250 font-mono">{v.currentOdometer.toLocaleString()} km</td>
+                    <td className="p-4">
+                      <StatusBadge status={v.status} />
+                    </td>
+                    {isEditable && (
+                      <td className="p-4 text-right">
+                        <div className="flex justify-end items-center gap-2">
+                          <button
+                            onClick={() => handleEditClick(v)}
+                            className="p-1.5 rounded-lg border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800 cursor-pointer transition-colors"
+                            title="Edit Vehicle"
+                          >
+                            <Edit3 className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteClick(v.id)}
+                            className="p-1.5 rounded-lg border border-rose-200 dark:border-rose-900/30 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/20 cursor-pointer transition-colors"
+                            title="Archive Vehicle"
+                          >
+                            <Archive className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </td>
+                    )}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       ) : (
         <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-12 text-center shadow-xs flex flex-col items-center justify-center space-y-4">
-          <div className="w-16 h-16 rounded-2xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-500 flex items-center justify-center">
+          <div className="w-16 h-16 rounded-2xl bg-teal-50 dark:bg-teal-950/20 text-[#0F766E] flex items-center justify-center">
             <Truck className="w-8 h-8" />
           </div>
-          <h3 className="text-lg font-bold text-zinc-800 dark:text-zinc-200">No vehicles registered</h3>
-          <p className="text-sm text-zinc-500 max-w-sm">
+          <h3 className="text-lg font-bold text-zinc-705 dark:text-zinc-200">No vehicles registered</h3>
+          <p className="text-sm text-zinc-450 dark:text-zinc-450 max-w-sm font-medium">
             Add assets to start tracking dispatches, logs, and maintenance logs.
           </p>
           {isEditable && (
             <button
               onClick={() => setIsCreateOpen(true)}
-              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-semibold cursor-pointer"
+              className="h-10 px-4 bg-[#0F766E] hover:bg-[#115E59] text-white rounded-xl text-xs font-bold cursor-pointer transition-all"
             >
               Add Your First Vehicle
             </button>
@@ -338,37 +351,37 @@ export function Vehicles() {
 
       {/* Register Vehicle Modal */}
       <Modal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} title="Register New Vehicle">
-        <form onSubmit={handleCreateSubmit} className="space-y-4">
+        <form onSubmit={handleCreateSubmit} className="space-y-4 pt-1">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Plate Number *</label>
+              <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-450 uppercase mb-1.5 tracking-wider">Plate Number *</label>
               <input
                 type="text"
                 required
                 value={formPlate}
                 onChange={(e) => setFormPlate(e.target.value)}
                 placeholder="e.g. TX-987-AB"
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+                className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden transition-all"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Vehicle Alias / Name</label>
+              <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-450 uppercase mb-1.5 tracking-wider">Alias / Name</label>
               <input
                 type="text"
                 value={formName}
                 onChange={(e) => setFormName(e.target.value)}
                 placeholder="e.g. Delivery Van A"
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+                className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden transition-all"
               />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Category *</label>
+              <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-450 uppercase mb-1.5 tracking-wider">Category *</label>
               <select
                 value={formCategory}
                 onChange={(e) => setFormCategory(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+                className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden cursor-pointer"
               >
                 <option value="SEDAN">Sedan</option>
                 <option value="SUV">SUV</option>
@@ -377,84 +390,84 @@ export function Vehicles() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Acquisition Cost ($)</label>
+              <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-450 uppercase mb-1.5 tracking-wider">Acquisition Cost ($)</label>
               <input
                 type="number"
                 step="0.01"
                 value={formAcquisitionCost}
                 onChange={(e) => setFormAcquisitionCost(e.target.value)}
                 placeholder="0.00"
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+                className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden transition-all"
               />
             </div>
           </div>
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Make *</label>
+              <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-450 uppercase mb-1.5 tracking-wider">Make *</label>
               <input
                 type="text"
                 required
                 value={formMake}
                 onChange={(e) => setFormMake(e.target.value)}
                 placeholder="e.g. Ford"
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+                className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden transition-all"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Model *</label>
+              <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-450 uppercase mb-1.5 tracking-wider">Model *</label>
               <input
                 type="text"
                 required
                 value={formModel}
                 onChange={(e) => setFormModel(e.target.value)}
                 placeholder="e.g. Transit"
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+                className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden transition-all"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Year *</label>
+              <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-450 uppercase mb-1.5 tracking-wider">Year *</label>
               <input
                 type="number"
                 required
                 value={formYear}
                 onChange={(e) => setFormYear(parseInt(e.target.value))}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+                className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden transition-all"
               />
             </div>
           </div>
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Odometer (km)</label>
+              <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-450 uppercase mb-1.5 tracking-wider">Odometer (km)</label>
               <input
                 type="number"
                 value={formOdometer}
                 onChange={(e) => setFormOdometer(parseInt(e.target.value))}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+                className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden transition-all"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Capacity (Max Load kg)</label>
+              <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-450 uppercase mb-1.5 tracking-wider">Capacity (kg)</label>
               <input
                 type="number"
                 value={formCapacity}
                 onChange={(e) => setFormCapacity(parseInt(e.target.value))}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+                className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden transition-all"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Fuel Type</label>
+              <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-450 uppercase mb-1.5 tracking-wider">Fuel Type</label>
               <input
                 type="text"
                 value={formFuelType}
                 onChange={(e) => setFormFuelType(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+                className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden transition-all"
               />
             </div>
           </div>
           <button
             type="submit"
             disabled={createMutation.isPending}
-            className="w-full py-2 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 disabled:bg-indigo-400 text-sm cursor-pointer"
+            className="w-full h-11 bg-[#0F766E] hover:bg-[#115E59] text-white rounded-lg font-bold text-xs cursor-pointer shadow-lg shadow-teal-500/10 active:scale-[0.98] transition-all flex items-center justify-center"
           >
             {createMutation.isPending ? 'Registering...' : 'Register Vehicle'}
           </button>
@@ -463,24 +476,24 @@ export function Vehicles() {
 
       {/* Edit Vehicle Modal */}
       <Modal isOpen={isEditOpen} onClose={() => setIsEditOpen(false)} title="Update Vehicle Profile">
-        <form onSubmit={handleEditSubmit} className="space-y-4">
+        <form onSubmit={handleEditSubmit} className="space-y-4 pt-1">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Plate Number</label>
+              <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-450 uppercase mb-1.5 tracking-wider">Plate Number</label>
               <input
                 type="text"
                 required
                 value={formPlate}
                 onChange={(e) => setFormPlate(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+                className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden transition-all"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Operational Status</label>
+              <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-450 uppercase mb-1.5 tracking-wider">Operational Status</label>
               <select
                 value={editStatus}
                 onChange={(e) => setEditStatus(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+                className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden cursor-pointer"
               >
                 <option value="ACTIVE">Active</option>
                 <option value="ON_TRIP">On Trip</option>
@@ -492,80 +505,80 @@ export function Vehicles() {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Vehicle Name / Alias</label>
+              <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-450 uppercase mb-1.5 tracking-wider">Vehicle Name / Alias</label>
               <input
                 type="text"
                 value={formName}
                 onChange={(e) => setFormName(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+                className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden transition-all"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Acquisition Cost ($)</label>
+              <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-450 uppercase mb-1.5 tracking-wider">Acquisition Cost ($)</label>
               <input
                 type="number"
                 step="0.01"
                 value={formAcquisitionCost}
                 onChange={(e) => setFormAcquisitionCost(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+                className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden transition-all"
               />
             </div>
           </div>
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Make</label>
+              <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-450 uppercase mb-1.5 tracking-wider">Make</label>
               <input
                 type="text"
                 required
                 value={formMake}
                 onChange={(e) => setFormMake(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+                className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden transition-all"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Model</label>
+              <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-450 uppercase mb-1.5 tracking-wider">Model</label>
               <input
                 type="text"
                 required
                 value={formModel}
                 onChange={(e) => setFormModel(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+                className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden transition-all"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Odometer (km)</label>
+              <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-450 uppercase mb-1.5 tracking-wider">Odometer (km)</label>
               <input
                 type="number"
                 value={formOdometer}
                 onChange={(e) => setFormOdometer(parseInt(e.target.value))}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+                className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden transition-all"
               />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4 pt-2 border-t border-zinc-150 dark:border-zinc-800">
             <div>
-              <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Next Service Date</label>
+              <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-450 uppercase mb-1.5 tracking-wider">Next Service Date</label>
               <input
                 type="date"
                 value={editNextServiceDate}
                 onChange={(e) => setEditNextServiceDate(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+                className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden transition-all"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Next Service Odometer (km)</label>
+              <label className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-450 uppercase mb-1.5 tracking-wider">Next Service Odometer</label>
               <input
                 type="number"
                 value={editNextServiceOdometer}
                 onChange={(e) => setEditNextServiceOdometer(parseInt(e.target.value))}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
+                className="w-full h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-[#F8FAFC] dark:bg-zinc-950 text-xs font-medium focus:bg-white dark:focus:bg-zinc-900 focus:ring-2 focus:ring-[#0F766E]/20 focus:border-[#0F766E] outline-hidden transition-all"
               />
             </div>
           </div>
           <button
             type="submit"
             disabled={updateMutation.isPending}
-            className="w-full py-2 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 disabled:bg-indigo-400 text-sm cursor-pointer"
+            className="w-full h-11 bg-[#0F766E] hover:bg-[#115E59] text-white rounded-lg font-bold text-xs cursor-pointer shadow-lg shadow-teal-500/10 active:scale-[0.98] transition-all flex items-center justify-center"
           >
             {updateMutation.isPending ? 'Updating...' : 'Save Changes'}
           </button>
