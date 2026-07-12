@@ -2,7 +2,7 @@ services:
   - type: web
     name: transitops-app
     env: node
-    plan: starter
+    plan: free
     buildCommand: npm install && npm run build && cd backend && npx prisma generate && npx prisma migrate deploy && npm run prisma:seed
     startCommand: npm run start
     envVars:
@@ -23,6 +23,6 @@ services:
 
 databases:
   - name: transitops-db
-    plan: starter
+    plan: free
     databaseName: transitops
     user: transit_admin
