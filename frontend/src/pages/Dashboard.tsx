@@ -13,6 +13,7 @@ import {
   Star,
 } from 'lucide-react';
 import { CardSkeleton } from '../components/Skeleton';
+import { useTheme } from '../contexts/ThemeContext';
 import {
   BarChart,
   Bar,
@@ -27,6 +28,14 @@ import {
 } from 'recharts';
 
 export function Dashboard() {
+  const { resolvedTheme } = useTheme();
+
+  const gridStroke = resolvedTheme === 'dark' ? '#27272a' : '#e4e4e7';
+  const textStroke = resolvedTheme === 'dark' ? '#71717a' : '#a1a1aa';
+  const tooltipBg = resolvedTheme === 'dark' ? '#18181b' : '#ffffff';
+  const tooltipBorder = resolvedTheme === 'dark' ? '#27272a' : '#e4e4e7';
+  const tooltipColor = resolvedTheme === 'dark' ? '#f4f4f5' : '#18181b';
+
   const { data, isLoading, error } = useQuery({
     queryKey: ['dashboard-metrics'],
     queryFn: () => api.get('/reports/metrics'),
@@ -248,16 +257,17 @@ export function Dashboard() {
             {charts.expenseBreakdown.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={charts.expenseBreakdown} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f4f4f5" className="dark:stroke-zinc-800/40" />
-                  <XAxis dataKey="category" stroke="#a1a1aa" fontSize={11} tickLine={false} />
-                  <YAxis stroke="#a1a1aa" fontSize={11} tickLine={false} />
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={gridStroke} />
+                  <XAxis dataKey="category" stroke={textStroke} fontSize={11} tickLine={false} />
+                  <YAxis stroke={textStroke} fontSize={11} tickLine={false} />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: 'rgba(24, 24, 27, 0.95)',
+                      backgroundColor: tooltipBg,
+                      borderColor: tooltipBorder,
                       borderRadius: '12px',
-                      border: 'none',
-                      color: '#ffffff',
+                      color: tooltipColor,
                     }}
+                    itemStyle={{ color: tooltipColor }}
                   />
                   <Bar dataKey="amount" fill="#6366f1" radius={[8, 8, 0, 0]} />
                 </BarChart>
@@ -295,11 +305,12 @@ export function Dashboard() {
                   </Pie>
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: 'rgba(24, 24, 27, 0.95)',
+                      backgroundColor: tooltipBg,
+                      borderColor: tooltipBorder,
                       borderRadius: '12px',
-                      border: 'none',
-                      color: '#ffffff',
+                      color: tooltipColor,
                     }}
+                    itemStyle={{ color: tooltipColor }}
                   />
                 </PieChart>
               </ResponsiveContainer>

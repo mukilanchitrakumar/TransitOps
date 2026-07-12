@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
-import { Sun, Moon, Search, Loader2 } from 'lucide-react';
+import { Sun, Moon, Monitor, Search, Loader2 } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
 import { useDebounce } from '../hooks/useDebounce';
@@ -11,7 +11,7 @@ interface HeaderProps {
 }
 
 export function Header({ isCollapsed }: HeaderProps) {
-  const { theme, toggleTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
   const { user } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
@@ -24,6 +24,9 @@ export function Header({ isCollapsed }: HeaderProps) {
   }>({ vehicles: [], drivers: [], trips: [] });
   const [isSearching, setIsSearching] = useState(false);
   const [showResults, setShowResults] = useState(false);
+
+  const [isThemeMenuOpen, setIsThemeMenuOpen] = useState(false);
+  const themeMenuRef = useRef<HTMLDivElement>(null);
 
   const debouncedSearch = useDebounce(searchTerm, 350);
   const searchRef = useRef<HTMLDivElement>(null);
@@ -41,6 +44,16 @@ export function Header({ isCollapsed }: HeaderProps) {
   }, []);
 
   useEffect(() => {
+    function handleClickOutsideTheme(event: MouseEvent) {
+      if (themeMenuRef.current && !themeMenuRef.current.contains(event.target as Node)) {
+        setIsThemeMenuOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutsideTheme);
+    return () => document.removeEventListener('mousedown', handleClickOutsideTheme);
+  }, []);
+
+  useEffect(() => {
     if (!debouncedSearch || debouncedSearch.length < 2) {
       setSearchResults({ vehicles: [], drivers: [], trips: [] });
       setIsSearching(false);
@@ -48,31 +61,21 @@ export function Header({ isCollapsed }: HeaderProps) {
     }
 
     async function performSearch() {
+      setIsSearching(true);
       try {
-        setIsSearching(true);
-        const queryParams = `?search=${encodeURIComponent(debouncedSearch)}&limit=3`;
-        
-        const [vehiclesRes, driversRes, tripsRes] = await Promise.allSettled([
-          api.get(`/vehicles${queryParams}`),
-          api.get(`/drivers${queryParams}`),
-          api.get(`/trips${queryParams}`),
+        const [vehiclesRes, driversRes, tripsRes] = await Promise.all([
+          api.get(`/vehicles?search=${encodeURIComponent(debouncedSearch)}&limit=3`),
+          api.get(`/drivers?search=${encodeURIComponent(debouncedSearch)}&limit=3`),
+          api.get(`/trips?search=${encodeURIComponent(debouncedSearch)}&limit=3`),
         ]);
-
-        const results = { vehicles: [], drivers: [], trips: [] };
-
-        if (vehiclesRes.status === 'fulfilled' && vehiclesRes.value.success) {
-          results.vehicles = vehiclesRes.value.data || [];
-        }
-        if (driversRes.status === 'fulfilled' && driversRes.value.success) {
-          results.drivers = driversRes.value.data || [];
-        }
-        if (tripsRes.status === 'fulfilled' && tripsRes.value.success) {
-          results.trips = tripsRes.value.data || [];
-        }
-
-        setSearchResults(results);
+        setSearchResults({
+          vehicles: vehiclesRes.data || [],
+          drivers: driversRes.data || [],
+          trips: tripsRes.data || [],
+        });
+        setShowResults(true);
       } catch (err) {
-        console.error('Global search error:', err);
+        console.error('Search error:', err);
       } finally {
         setIsSearching(false);
       }
@@ -81,33 +84,32 @@ export function Header({ isCollapsed }: HeaderProps) {
     performSearch();
   }, [debouncedSearch]);
 
-  const handleResultClick = (targetPath: string, searchPreset: string) => {
-    setSearchTerm('');
+  const handleResultClick = (path: string) => {
     setShowResults(false);
-    navigate(`${targetPath}?search=${encodeURIComponent(searchPreset)}`);
+    setSearchTerm('');
+    navigate(path);
   };
 
   return (
-    <header className={`fixed top-0 right-0 z-30 h-16 border-b border-zinc-200 dark:border-zinc-800 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md flex items-center justify-between px-6 transition-all duration-300 ml-auto max-md:w-full ${
-      isCollapsed ? 'w-[calc(100%-5rem)]' : 'w-[calc(100%-16rem)]'
-    }`}>
-      <div className="flex items-center space-x-2 text-sm max-md:hidden">
-        <Link to="/dashboard" className="text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200 font-medium">
-          Home
-        </Link>
-        {pathnames.map((value, index) => {
-          const to = `/${pathnames.slice(0, index + 1).join('/')}`;
+    <header className="h-16 border-b border-zinc-200 dark:border-zinc-800 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md flex items-center justify-between px-6 sticky top-0 z-40 transition-colors">
+      <div className="flex items-center gap-2">
+        <span className="text-zinc-300 dark:text-zinc-700">/</span>
+        {pathnames.map((name, index) => {
+          const routeTo = `/${pathnames.slice(0, index + 1).join('/')}`;
           const isLast = index === pathnames.length - 1;
-          const formattedValue = value.replace('_', ' ').charAt(0).toUpperCase() + value.slice(1);
-
           return (
-            <React.Fragment key={to}>
-              <span className="text-zinc-300 dark:text-zinc-700">/</span>
+            <React.Fragment key={name}>
+              {index > 0 && <span className="text-zinc-300 dark:text-zinc-700">/</span>}
               {isLast ? (
-                <span className="text-zinc-800 dark:text-zinc-200 font-semibold">{formattedValue}</span>
+                <span className="text-sm font-semibold text-zinc-900 dark:text-zinc-50 capitalize">
+                  {name.replace(/-/g, ' ')}
+                </span>
               ) : (
-                <Link to={to} className="text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200 font-medium">
-                  {formattedValue}
+                <Link
+                  to={routeTo}
+                  className="text-sm text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-50 capitalize transition-colors"
+                >
+                  {name.replace(/-/g, ' ')}
                 </Link>
               )}
             </React.Fragment>
@@ -115,109 +117,149 @@ export function Header({ isCollapsed }: HeaderProps) {
         })}
       </div>
 
-      <div className="md:hidden font-bold text-indigo-600 dark:text-indigo-400">
-        TransitOps
-      </div>
-
-      <div className="flex items-center space-x-4 flex-1 justify-end">
-        <div ref={searchRef} className="relative w-72 max-sm:w-44">
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Search..."
-              value={searchTerm}
-              onChange={(e) => {
-                setSearchTerm(e.target.value);
-                setShowResults(true);
-              }}
-              onFocus={() => setShowResults(true)}
-              className="w-full pl-9 pr-8 py-1.5 rounded-xl text-sm border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 focus:bg-white dark:focus:bg-zinc-950 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 outline-hidden transition-all"
-            />
-            <Search className="absolute left-3 top-2.5 w-4 h-4 text-zinc-400" />
-            {isSearching && (
-              <Loader2 className="absolute right-3 top-2.5 w-4 h-4 text-zinc-400 animate-spin" />
-            )}
-          </div>
+      <div className="flex items-center gap-4">
+        {/* Global Search Bar */}
+        <div ref={searchRef} className="relative w-64 max-sm:hidden">
+          <input
+            type="text"
+            placeholder="Search cockpit registry..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onFocus={() => setShowResults(true)}
+            className="w-full pl-9 pr-8 py-1.5 text-xs rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 focus:bg-white dark:focus:bg-zinc-950 text-zinc-900 dark:text-zinc-50 focus:ring-2 focus:ring-indigo-500 outline-hidden transition-all duration-300"
+          />
+          <Search className="absolute left-3 top-2.5 w-3.5 h-3.5 text-zinc-400" />
+          {isSearching && (
+            <Loader2 className="absolute right-3 top-2.5 w-3.5 h-3.5 text-zinc-400 animate-spin" />
+          )}
 
           {showResults && (searchTerm.length >= 2) && (
-            <div className="absolute right-0 mt-2 w-80 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-2xl p-3 overflow-hidden text-sm z-50">
-              {isSearching ? (
-                <div className="p-4 text-center text-zinc-500 dark:text-zinc-400 flex items-center justify-center gap-2">
-                  <Loader2 className="w-4 h-4 animate-spin text-indigo-500" /> Searching...
-                </div>
-              ) : (
-                <div className="max-h-[300px] overflow-y-auto space-y-3.5">
+            <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-lg overflow-hidden z-50 text-xs text-zinc-705 dark:text-zinc-300">
+              {(searchResults.vehicles.length > 0 ||
+                searchResults.drivers.length > 0 ||
+                searchResults.trips.length > 0) ? (
+                <div className="divide-y divide-zinc-100 dark:divide-zinc-800">
                   {searchResults.vehicles.length > 0 && (
-                    <div>
-                      <h4 className="text-xs font-bold text-zinc-400 dark:text-zinc-500 px-2 uppercase tracking-wider mb-1">Vehicles</h4>
-                      <div className="space-y-0.5">
-                        {searchResults.vehicles.map((v) => (
-                          <button
-                            key={v.id}
-                            onClick={() => handleResultClick('/vehicles', v.plateNumber)}
-                            className="w-full text-left px-2 py-1.5 rounded-lg hover:bg-zinc-50 dark:hover:bg-zinc-800/60 text-zinc-700 dark:text-zinc-300 font-medium"
-                          >
-                            {v.plateNumber} - {v.make} {v.model}
-                          </button>
-                        ))}
-                      </div>
+                    <div className="p-2 space-y-1">
+                      <p className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest px-2 mb-1">
+                        Vehicles
+                      </p>
+                      {searchResults.vehicles.map((v) => (
+                        <button
+                          key={v.id}
+                          onClick={() => handleResultClick('/vehicles')}
+                          className="w-full text-left px-2 py-1.5 rounded-lg hover:bg-zinc-50 dark:hover:bg-zinc-800 flex justify-between font-semibold"
+                        >
+                          <span>{v.plateNumber}</span>
+                          <span className="text-zinc-450 text-[10px]">{v.make} {v.model}</span>
+                        </button>
+                      ))}
                     </div>
                   )}
 
                   {searchResults.drivers.length > 0 && (
-                    <div>
-                      <h4 className="text-xs font-bold text-zinc-400 dark:text-zinc-500 px-2 uppercase tracking-wider mb-1">Drivers</h4>
-                      <div className="space-y-0.5">
-                        {searchResults.drivers.map((d) => (
-                          <button
-                            key={d.id}
-                            onClick={() => handleResultClick('/drivers', d.fullName)}
-                            className="w-full text-left px-2 py-1.5 rounded-lg hover:bg-zinc-50 dark:hover:bg-zinc-800/60 text-zinc-700 dark:text-zinc-300 font-medium"
-                          >
-                            {d.fullName} ({d.licenseNumber})
-                          </button>
-                        ))}
-                      </div>
+                    <div className="p-2 space-y-1">
+                      <p className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest px-2 mb-1">
+                        Drivers
+                      </p>
+                      {searchResults.drivers.map((d) => (
+                        <button
+                          key={d.id}
+                          onClick={() => handleResultClick('/drivers')}
+                          className="w-full text-left px-2 py-1.5 rounded-lg hover:bg-zinc-50 dark:hover:bg-zinc-800 flex justify-between font-semibold"
+                        >
+                          <span>{d.fullName}</span>
+                          <span className="text-zinc-450 text-[10px]">{d.licenseNumber}</span>
+                        </button>
+                      ))}
                     </div>
                   )}
 
                   {searchResults.trips.length > 0 && (
-                    <div>
-                      <h4 className="text-xs font-bold text-zinc-400 dark:text-zinc-500 px-2 uppercase tracking-wider mb-1">Trips</h4>
-                      <div className="space-y-0.5">
-                        {searchResults.trips.map((t) => (
-                          <button
-                            key={t.id}
-                            onClick={() => handleResultClick('/trips', t.tripNumber)}
-                            className="w-full text-left px-2 py-1.5 rounded-lg hover:bg-zinc-50 dark:hover:bg-zinc-800/60 text-zinc-700 dark:text-zinc-300 font-medium"
-                          >
-                            {t.tripNumber} ({t.startLocation} → {t.endLocation})
-                          </button>
-                        ))}
-                      </div>
+                    <div className="p-2 space-y-1">
+                      <p className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest px-2 mb-1">
+                        Trips
+                      </p>
+                      {searchResults.trips.map((t) => (
+                        <button
+                          key={t.id}
+                          onClick={() => handleResultClick('/trips')}
+                          className="w-full text-left px-2 py-1.5 rounded-lg hover:bg-zinc-50 dark:hover:bg-zinc-800 flex justify-between font-semibold"
+                        >
+                          <span>{t.tripNumber}</span>
+                          <span className="text-zinc-450 text-[10px]">{t.startLocation} ➔ {t.endLocation}</span>
+                        </button>
+                      ))}
                     </div>
                   )}
-
-                  {searchResults.vehicles.length === 0 &&
-                    searchResults.drivers.length === 0 &&
-                    searchResults.trips.length === 0 && (
-                      <div className="p-4 text-center text-zinc-500 dark:text-zinc-400 font-medium">
-                        No matches found.
-                      </div>
-                    )}
                 </div>
+              ) : (
+                searchResults.vehicles.length === 0 &&
+                searchResults.drivers.length === 0 &&
+                searchResults.trips.length === 0 && (
+                  <div className="p-4 text-center text-zinc-500 dark:text-zinc-400 font-medium">
+                    No matches found.
+                  </div>
+                )
               )}
             </div>
           )}
         </div>
 
-        <button
-          onClick={toggleTheme}
-          className="p-2 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 transition-colors"
-          title="Toggle Theme"
-        >
-          {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-500" /> : <Moon className="w-4 h-4 text-indigo-500" />}
-        </button>
+        {/* Dynamic theme dropdown selection */}
+        <div className="relative" ref={themeMenuRef}>
+          <button
+            onClick={() => setIsThemeMenuOpen(!isThemeMenuOpen)}
+            className="p-2 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 transition-colors flex items-center justify-center cursor-pointer"
+            title="Choose Theme"
+          >
+            {theme === 'dark' ? (
+              <Moon className="w-4 h-4 text-indigo-500" />
+            ) : theme === 'light' ? (
+              <Sun className="w-4 h-4 text-amber-500" />
+            ) : (
+              <Monitor className="w-4 h-4 text-teal-500" />
+            )}
+          </button>
+
+          {isThemeMenuOpen && (
+            <div className="absolute right-0 mt-2 w-32 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-lg py-1 z-50 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+              <button
+                type="button"
+                onClick={() => {
+                  setTheme('light');
+                  setIsThemeMenuOpen(false);
+                }}
+                className={`w-full px-3 py-2 flex items-center gap-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-left cursor-pointer ${theme === 'light' ? 'text-indigo-600 dark:text-indigo-400 font-bold bg-indigo-50/10' : ''}`}
+              >
+                <Sun className="w-3.5 h-3.5 text-amber-500" />
+                <span>Light</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setTheme('dark');
+                  setIsThemeMenuOpen(false);
+                }}
+                className={`w-full px-3 py-2 flex items-center gap-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-left cursor-pointer ${theme === 'dark' ? 'text-indigo-600 dark:text-indigo-400 font-bold bg-indigo-50/10' : ''}`}
+              >
+                <Moon className="w-3.5 h-3.5 text-indigo-500" />
+                <span>Dark</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setTheme('system');
+                  setIsThemeMenuOpen(false);
+                }}
+                className={`w-full px-3 py-2 flex items-center gap-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-left cursor-pointer ${theme === 'system' ? 'text-indigo-600 dark:text-indigo-400 font-bold bg-indigo-50/10' : ''}`}
+              >
+                <Monitor className="w-3.5 h-3.5 text-teal-500" />
+                <span>System</span>
+              </button>
+            </div>
+          )}
+        </div>
 
         {user && (
           <div className="flex items-center gap-2 max-sm:hidden">

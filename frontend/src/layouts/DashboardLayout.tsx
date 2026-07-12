@@ -23,7 +23,7 @@ export function DashboardLayout() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-955 text-zinc-900 dark:text-zinc-100 transition-colors">
+    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 transition-colors">
       <Sidebar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
       <div
         className={`flex flex-col min-h-screen transition-all duration-300 ${

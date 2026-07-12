@@ -240,7 +240,7 @@ export function Trips() {
                 return prev;
               });
             }}
-            className="px-3.5 py-2 rounded-xl text-sm border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-955 text-zinc-850 dark:text-zinc-202 focus:bg-white outline-hidden focus:ring-2 focus:ring-indigo-500 transition-all"
+            className="px-3.5 py-2 rounded-xl text-sm border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-850 dark:text-zinc-202 focus:bg-white outline-hidden focus:ring-2 focus:ring-indigo-500 transition-all"
           >
             <option value="">All States</option>
             <option value="DRAFT">Draft</option>
@@ -405,7 +405,7 @@ export function Trips() {
                 required
                 value={formDriver}
                 onChange={(e) => setFormDriver(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-955 text-sm"
+                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
               >
                 <option value="">-- Choose Active Driver --</option>
                 {activeDrivers?.data?.map((d: any) => (
@@ -425,7 +425,7 @@ export function Trips() {
                 value={formStartLoc}
                 onChange={(e) => setFormStartLoc(e.target.value)}
                 placeholder="e.g. Warehouse Zone A"
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-955 text-sm"
+                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
               />
             </div>
             <div>
@@ -436,7 +436,7 @@ export function Trips() {
                 value={formEndLoc}
                 onChange={(e) => setFormEndLoc(e.target.value)}
                 placeholder="e.g. Terminal 2 Port"
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-955 text-sm"
+                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
               />
             </div>
           </div>
@@ -448,7 +448,7 @@ export function Trips() {
                 required
                 value={formPlannedStart}
                 onChange={(e) => setFormPlannedStart(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-805 bg-zinc-50 dark:bg-zinc-955 text-sm"
+                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-805 bg-zinc-50 dark:bg-zinc-950 text-sm"
               />
             </div>
             <div>
@@ -458,7 +458,7 @@ export function Trips() {
                 required
                 value={formPlannedEnd}
                 onChange={(e) => setFormPlannedEnd(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-805 bg-zinc-50 dark:bg-zinc-955 text-sm"
+                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-805 bg-zinc-50 dark:bg-zinc-950 text-sm"
               />
             </div>
           </div>
@@ -503,7 +503,7 @@ export function Trips() {
               value={formPurpose}
               onChange={(e) => setFormPurpose(e.target.value)}
               placeholder="e.g. Cargo delivery"
-              className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-955 text-sm"
+              className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
             />
           </div>
           <button
@@ -519,7 +519,7 @@ export function Trips() {
       {/* Complete Trip Modal */}
       <Modal isOpen={isCompleteOpen} onClose={() => setIsCompleteOpen(false)} title="Complete Dispatched Trip">
         <form onSubmit={handleCompleteSubmit} className="space-y-4">
-          <div className="bg-zinc-50 dark:bg-zinc-955/40 p-4 rounded-xl border border-zinc-200 dark:border-zinc-800">
+          <div className="bg-zinc-50 dark:bg-zinc-950/40 p-4 rounded-xl border border-zinc-200 dark:border-zinc-800">
             <p className="text-xs font-semibold text-zinc-400 dark:text-zinc-500 uppercase tracking-wide">Start Odometer Reading</p>
             <p className="text-lg font-bold text-zinc-800 dark:text-zinc-200">
               {selectedTrip?.startOdometer || selectedTrip?.vehicle?.currentOdometer || 0} km
@@ -532,7 +532,7 @@ export function Trips() {
               required
               value={formEndOdometer}
               onChange={(e) => setFormEndOdometer(parseInt(e.target.value) || '')}
-              className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-955 text-sm"
+              className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
             />
           </div>
           <div>
@@ -542,7 +542,7 @@ export function Trips() {
               value={formActualCost}
               onChange={(e) => setFormActualCost(e.target.value)}
               placeholder="0.00"
-              className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-955 text-sm"
+              className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
             />
           </div>
           <div>
@@ -550,7 +550,7 @@ export function Trips() {
             <textarea
               value={formCompletionNotes}
               onChange={(e) => setFormCompletionNotes(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-955 text-sm h-16 resize-none"
+              className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm h-16 resize-none"
             />
           </div>
           <button

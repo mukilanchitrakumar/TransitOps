@@ -240,7 +240,7 @@ export function Drivers() {
                 return prev;
               });
             }}
-            className="px-3.5 py-2 rounded-xl text-sm border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-955 text-zinc-850 dark:text-zinc-202 focus:bg-white outline-hidden focus:ring-2 focus:ring-indigo-500 transition-all"
+            className="px-3.5 py-2 rounded-xl text-sm border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-850 dark:text-zinc-202 focus:bg-white outline-hidden focus:ring-2 focus:ring-indigo-500 transition-all"
           >
             <option value="">All Statuses</option>
             <option value="ACTIVE">Active</option>
@@ -257,7 +257,7 @@ export function Drivers() {
         <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl overflow-hidden shadow-xs">
           <table className="w-full text-left border-collapse text-sm">
             <thead>
-              <tr className="bg-zinc-50 dark:bg-zinc-955/40 text-zinc-500 dark:text-zinc-400 font-semibold border-b border-zinc-150 dark:border-zinc-800">
+              <tr className="bg-zinc-50 dark:bg-zinc-950/40 text-zinc-500 dark:text-zinc-400 font-semibold border-b border-zinc-150 dark:border-zinc-800">
                 <th className="p-4">Driver Name</th>
                 <th className="p-4">License Info</th>
                 <th className="p-4">Phone Number</th>
@@ -428,7 +428,7 @@ export function Drivers() {
                 type="text"
                 value={formEmergencyName}
                 onChange={(e) => setFormEmergencyName(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-955 text-sm"
+                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
               />
             </div>
             <div>
@@ -437,7 +437,7 @@ export function Drivers() {
                 type="text"
                 value={formEmergencyPhone}
                 onChange={(e) => setFormEmergencyPhone(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-955 text-sm"
+                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
               />
             </div>
           </div>
@@ -446,7 +446,7 @@ export function Drivers() {
             <textarea
               value={formAddress}
               onChange={(e) => setFormAddress(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-955 text-sm h-16 resize-none"
+              className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm h-16 resize-none"
             />
           </div>
           <button
@@ -470,7 +470,7 @@ export function Drivers() {
                 required
                 value={formName}
                 onChange={(e) => setFormName(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-955 text-sm"
+                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
               />
             </div>
             <div>
@@ -478,7 +478,7 @@ export function Drivers() {
               <select
                 value={driverStatus}
                 onChange={(e) => setDriverStatus(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-955 text-sm"
+                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
               >
                 <option value="ACTIVE">Active</option>
                 <option value="ON_TRIP">On Trip</option>
@@ -557,7 +557,7 @@ export function Drivers() {
                 type="text"
                 value={formEmergencyPhone}
                 onChange={(e) => setFormEmergencyPhone(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-955 text-sm"
+                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
               />
             </div>
           </div>

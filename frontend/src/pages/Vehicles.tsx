@@ -237,7 +237,7 @@ export function Vehicles() {
                   return prev;
                 });
               }}
-              className="w-full pl-9 pr-4 py-2 rounded-xl text-sm border border-zinc-200 dark:border-zinc-850 bg-zinc-50 dark:bg-zinc-955 focus:bg-white text-zinc-950 dark:text-zinc-50 outline-hidden focus:ring-2 focus:ring-indigo-500 transition-all"
+              className="w-full pl-9 pr-4 py-2 rounded-xl text-sm border border-zinc-200 dark:border-zinc-850 bg-zinc-50 dark:bg-zinc-950 focus:bg-white text-zinc-950 dark:text-zinc-50 outline-hidden focus:ring-2 focus:ring-indigo-500 transition-all"
             />
             <Search className="absolute left-3 top-3 w-4 h-4 text-zinc-400" />
           </div>
@@ -249,7 +249,7 @@ export function Vehicles() {
                 return prev;
               });
             }}
-            className="px-3.5 py-2 rounded-xl text-sm border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-955 text-zinc-805 dark:text-zinc-202 focus:bg-white outline-hidden focus:ring-2 focus:ring-indigo-500 transition-all"
+            className="px-3.5 py-2 rounded-xl text-sm border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-805 dark:text-zinc-202 focus:bg-white outline-hidden focus:ring-2 focus:ring-indigo-500 transition-all"
           >
             <option value="">All Statuses</option>
             <option value="ACTIVE">Active</option>
@@ -268,7 +268,7 @@ export function Vehicles() {
         <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl overflow-hidden shadow-xs">
           <table className="w-full text-left border-collapse text-sm">
             <thead>
-              <tr className="bg-zinc-50 dark:bg-zinc-955/40 text-zinc-500 dark:text-zinc-400 font-semibold border-b border-zinc-150 dark:border-zinc-800">
+              <tr className="bg-zinc-50 dark:bg-zinc-950/40 text-zinc-500 dark:text-zinc-400 font-semibold border-b border-zinc-150 dark:border-zinc-800">
                 <th className="p-4">Plate Number</th>
                 <th className="p-4">Vehicle Details</th>
                 <th className="p-4">Category</th>
@@ -368,7 +368,7 @@ export function Vehicles() {
               <select
                 value={formCategory}
                 onChange={(e) => setFormCategory(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-955 text-sm"
+                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
               >
                 <option value="SEDAN">Sedan</option>
                 <option value="SUV">SUV</option>
@@ -418,7 +418,7 @@ export function Vehicles() {
                 required
                 value={formYear}
                 onChange={(e) => setFormYear(parseInt(e.target.value))}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-955 text-sm"
+                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
               />
             </div>
           </div>
@@ -429,7 +429,7 @@ export function Vehicles() {
                 type="number"
                 value={formOdometer}
                 onChange={(e) => setFormOdometer(parseInt(e.target.value))}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-955 text-sm"
+                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
               />
             </div>
             <div>
@@ -438,7 +438,7 @@ export function Vehicles() {
                 type="number"
                 value={formCapacity}
                 onChange={(e) => setFormCapacity(parseInt(e.target.value))}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-955 text-sm"
+                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
               />
             </div>
             <div>
@@ -472,7 +472,7 @@ export function Vehicles() {
                 required
                 value={formPlate}
                 onChange={(e) => setFormPlate(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-955 text-sm"
+                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
               />
             </div>
             <div>
@@ -480,7 +480,7 @@ export function Vehicles() {
               <select
                 value={editStatus}
                 onChange={(e) => setEditStatus(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-955 text-sm"
+                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
               >
                 <option value="ACTIVE">Active</option>
                 <option value="ON_TRIP">On Trip</option>
@@ -497,7 +497,7 @@ export function Vehicles() {
                 type="text"
                 value={formName}
                 onChange={(e) => setFormName(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-955 text-sm"
+                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
               />
             </div>
             <div>
@@ -507,7 +507,7 @@ export function Vehicles() {
                 step="0.01"
                 value={formAcquisitionCost}
                 onChange={(e) => setFormAcquisitionCost(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-955 text-sm"
+                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
               />
             </div>
           </div>
@@ -538,7 +538,7 @@ export function Vehicles() {
                 type="number"
                 value={formOdometer}
                 onChange={(e) => setFormOdometer(parseInt(e.target.value))}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-955 text-sm"
+                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
               />
             </div>
           </div>
@@ -558,7 +558,7 @@ export function Vehicles() {
                 type="number"
                 value={editNextServiceOdometer}
                 onChange={(e) => setEditNextServiceOdometer(parseInt(e.target.value))}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-955 text-sm"
+                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
               />
             </div>
           </div>

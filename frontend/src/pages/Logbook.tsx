@@ -463,7 +463,7 @@ export function Logbook() {
                 required
                 value={fuelDriver}
                 onChange={(e) => setFuelDriver(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-955 text-sm"
+                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
               >
                 <option value="">-- Choose Driver --</option>
                 {drivers?.data?.map((d: any) => (
@@ -482,7 +482,7 @@ export function Logbook() {
                 required
                 value={fuelOdometer}
                 onChange={(e) => setFuelOdometer(parseInt(e.target.value) || '')}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-955 text-sm"
+                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
               />
             </div>
             <div>
@@ -493,7 +493,7 @@ export function Logbook() {
                 required
                 value={fuelQuantity}
                 onChange={(e) => setFuelQuantity(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-955 text-sm"
+                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
               />
             </div>
             <div>
@@ -504,7 +504,7 @@ export function Logbook() {
                 required
                 value={fuelCost}
                 onChange={(e) => setFuelCost(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-955 text-sm"
+                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
               />
             </div>
           </div>
@@ -549,7 +549,7 @@ export function Logbook() {
               <select
                 value={expCategory}
                 onChange={(e) => setExpCategory(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-955 text-sm"
+                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
               >
                 <option value="FUEL">Fuel</option>
                 <option value="TOLL">Tolls</option>
@@ -612,7 +612,7 @@ export function Logbook() {
                 required
                 value={expDate}
                 onChange={(e) => setExpDate(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-955 text-sm"
+                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
               />
             </div>
             <div>
@@ -622,7 +622,7 @@ export function Logbook() {
                 value={expReceiptUrl}
                 onChange={(e) => setExpReceiptUrl(e.target.value)}
                 placeholder="https://imgur.com/receipt.jpg"
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-955 text-sm"
+                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
               />
             </div>
           </div>

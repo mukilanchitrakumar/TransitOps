@@ -229,7 +229,7 @@ export function Maintenances() {
         <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl overflow-hidden shadow-xs">
           <table className="w-full text-left border-collapse text-sm">
             <thead>
-              <tr className="bg-zinc-50 dark:bg-zinc-955/40 text-zinc-500 dark:text-zinc-400 font-semibold border-b border-zinc-150 dark:border-zinc-800">
+              <tr className="bg-zinc-50 dark:bg-zinc-950/40 text-zinc-500 dark:text-zinc-400 font-semibold border-b border-zinc-150 dark:border-zinc-800">
                 <th className="p-4">Vehicle</th>
                 <th className="p-4">Task Details</th>
                 <th className="p-4">Scheduled Date</th>
@@ -340,7 +340,7 @@ export function Maintenances() {
               <select
                 value={formType}
                 onChange={(e) => setFormType(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-955 text-sm"
+                className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm"
               >
                 <option value="ROUTINE">Routine Maintenance</option>
                 <option value="REPAIR">Repair Work</option>
@@ -386,7 +386,7 @@ export function Maintenances() {
             <textarea
               value={formNotes}
               onChange={(e) => setFormNotes(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-955 text-sm h-16 resize-none"
+              className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm h-16 resize-none"
             />
           </div>
           <button
@@ -441,7 +441,7 @@ export function Maintenances() {
             <textarea
               value={formCompletionNotes}
               onChange={(e) => setFormCompletionNotes(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-955 text-sm h-16 resize-none"
+              className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-sm h-16 resize-none"
             />
           </div>
           <button
