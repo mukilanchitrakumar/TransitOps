@@ -21,8 +21,8 @@ services:
       - key: PORT
         value: 10000
 
-  - type: psql
-    name: transitops-db
+databases:
+  - name: transitops-db
     plan: starter
     databaseName: transitops
     user: transit_admin
